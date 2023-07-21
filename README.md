@@ -1,5 +1,5 @@
 # MarketPrediction
-##How to run
+## How to run
 
 1. Open "Anaconda Navigator"
 2. Click "Environment"
