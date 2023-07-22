@@ -326,6 +326,12 @@ elif selectDataset == "Commodity":
     y = data_target_training
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
+
+    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test =scaler.transform(X_test)
+
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
     X_train
@@ -394,6 +400,9 @@ elif selectDataset == "Commodity":
         svm = mean_squared_error(prediction,y_test)
         st.write("mean squared error: for kernel", "rbf" , svm)
 
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+
         st.write(" ")
         st.subheader("Linear")
         svm_model = SVR(kernel="linear")
@@ -407,8 +416,10 @@ elif selectDataset == "Commodity":
         st.write("Predicted result for linear Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "linear" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
 
         st.write(" ")
@@ -424,8 +435,10 @@ elif selectDataset == "Commodity":
         st.write("Predicted result for poly Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "poly" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
 
         st.write(" ")
@@ -441,8 +454,10 @@ elif selectDataset == "Commodity":
         st.write("Predicted result for sigmoid Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "sigmoid", svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
 
 
