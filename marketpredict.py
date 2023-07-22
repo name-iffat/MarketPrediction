@@ -314,7 +314,7 @@ elif selectDataset == "Commodity":
     commodity_dataset
 
     st.subheader("Data input for Commodity")
-    data_input_training = commodity_dataset.drop(columns = ["Adj Close"])
+    data_input_training = commodity_dataset.drop(columns = ["Adj Close","Date"])
     data_input_training
 
     st.subheader("Data target for Commodity")
