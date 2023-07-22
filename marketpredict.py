@@ -310,15 +310,15 @@ elif selectDataset == "Commodity":
     st.subheader("Full dataset for Commodity")
     #your dataset
 
-    female_dataset = pd.read_csv('xray_image_dataset_female.csv')
-    female_dataset
+    commodity_dataset = pd.read_csv('final_USO.csv')
+    commodity_dataset
 
-    st.subheader("Data input for female")
-    data_input_training = female_dataset.drop(columns = ["No", "Race", "Gender", "DOB", "Exam Date", "Tanner", "Trunk HT (cm)"])
+    st.subheader("Data input for Commodity")
+    data_input_training = commodity_dataset.drop(columns = ["Adj Close"])
     data_input_training
 
-    st.subheader("Data target for female")
-    data_target_training = female_dataset['ChrAge']
+    st.subheader("Data target for Commodity")
+    data_target_training = commodity_dataset['Adj Close']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
