@@ -168,15 +168,21 @@ elif selectDataset == "Stock":
 
     st.subheader("Full dataset for Stock")
     #your dataset
-    female_dataset = pd.read_csv('xray_image_dataset_female.csv')
-    female_dataset
+    stock = pd.read_csv('prices.csv')
+    stock
 
-    st.subheader("Data input for female")
-    data_input_training = female_dataset.drop(columns = ["No", "Race", "Gender", "DOB", "Exam Date", "Tanner", "Trunk HT (cm)"])
+    #sampling amazon dataset
+    st.write("Sample amazon dataset")
+    stock1 = stock[stock['symbol']=='AMZN']
+    stock1
+
+    st.subheader("Data input for stock")
+    stock1.drop(columns = ["symbol"])
+    data_input_training = stock1[['volume','open']]
     data_input_training
 
-    st.subheader("Data target for female")
-    data_target_training = female_dataset['ChrAge']
+    st.subheader("Data target for stock")
+    data_target_training = stock1['close']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
@@ -184,8 +190,14 @@ elif selectDataset == "Stock":
     y = data_target_training
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
+    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test =scaler.transform(X_test)
+
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
+
     X_train
     st.write("Training Data Target")
     y_train
@@ -231,6 +243,8 @@ elif selectDataset == "Stock":
 
         MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
         st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
+        
+
 
 #SVM
     elif selectModel == "Support Vector Machine":
@@ -249,8 +263,11 @@ elif selectDataset == "Stock":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "rbf" , svm)
+        
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
         st.write(" ")
         st.subheader("Linear")
@@ -265,8 +282,10 @@ elif selectDataset == "Stock":
         st.write("Predicted result for linear Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "linear" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
 
         st.write(" ")
@@ -282,9 +301,10 @@ elif selectDataset == "Stock":
         st.write("Predicted result for poly Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "poly" , svm)
-
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
         st.write(" ")
         st.subheader("Sigmoid")
@@ -299,9 +319,10 @@ elif selectDataset == "Stock":
         st.write("Predicted result for sigmoid Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "sigmoid", svm)
-
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
 
 #COMMODITY PRICE
