@@ -306,6 +306,22 @@ elif selectDataset == "Stock":
 
 #COMMODITY PRICE
 elif selectDataset == "Commodity":
+    st.subheader("Description of the dataset")
+    with st.columns(3)[1]:
+        st.image("image/gold.png", width=300)
+    text = """
+    <style>
+    .justify-text {
+        text-align: justify;
+    }
+    </style>
+
+    <div class="justify-text">
+    There are 80 total columns and 1718 total rows in the dataset. The data was gathered for attributes including the price of oil, the Standard and Poor's 500 index, the Dow Jones Index US Bond rates (10 years), the exchange rate between the euro and the dollar, the price of precious metals such as silver and platinum as well as other metals like palladium and rhodium, the price of the US Dollar Index, and the Eldorado Gold Corporation and Gold Miners ETF. The historical data for the Gold ETF is available in seven columns: Date, Open, High, Low, Close, Adjusted Close, and Volume. The closing price of a stock is determined by its price at the end of the trading day, as opposed to the Adjusted Close. The adjusted closing price, on the other hand, determines value by taking into account variables like dividends, stock splits, and new stock offerings. Therefore, Adjusted Close is the outcome variable, and its value needs to be predicted.
+    </div>
+    """
+    
+    st.write(text, unsafe_allow_html=True)
 
     st.subheader("Full dataset for Commodity")
     #your dataset
