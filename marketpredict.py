@@ -191,9 +191,9 @@ elif selectDataset == "Stock":
     y_train
 
     st.subheader("Testing data for input and target")
-    st.write("Training Data Input")
+    st.write("Testing Data Input")
     X_test
-    st.write("Training Data Target")
+    st.write("Testing Data Target")
     y_test
 
 #Algorithm selection
@@ -339,9 +339,9 @@ elif selectDataset == "Commodity":
     y_train
 
     st.subheader("Testing data for input and target")
-    st.write("Training Data Input")
+    st.write("Testing Data Input")
     X_test
-    st.write("Training Data Target")
+    st.write("Testing Data Target")
     y_test
 
 #Algorithm selection
@@ -349,36 +349,43 @@ elif selectDataset == "Commodity":
 
 #RANDOM FOREST
     if selectModel == "Random Forest":
+        n_estimators_list = [50, 100, 150, 200]
 
-        st.subheader("Random Forest age estimation model")
-        rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
-        st.write("Training the Model...")
-        rf.fit (X_train, y_train)
+        for n_estimators in n_estimators_list:
+            st.subheader(f"Random Forest age estimation model (n_estimators = {n_estimators})")
+            rf = RandomForestRegressor(n_estimators=n_estimators, random_state=0)
+            st.write("Training the Model...")
+            rf.fit(X_train, y_train)
 
-        st.write("Successfully Train the model")
-        outputPredicted50 = rf.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredicted50
+            st.write("Successfully Trained the model")
+            output_predicted = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted)
 
-        MSE50 = mean_squared_error (outputPredicted50, y_test)
-        st.write("The mean Squared Error Produced by n_estimator = 50: ", MSE50)
+            MSE = mean_squared_error(output_predicted, y_test)
+            st.write(f"The Mean Squared Error produced by n_estimators = {n_estimators}: ", MSE)
+            sc = np.round(rf.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
-        
-        st.subheader("K-Nearest Neighbors age estimation model")
-        knn = KNeighborsRegressor (n_neighbors = 10)
-        st.write("Training the Model...")
-        knn.fit (X_train, y_train)
+        n_neighbors_list = [10, 15, 20, 100]
 
-        st.write("Successfully Train the model")
+        for n_neighbors in n_neighbors_list:
+            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            knn = KNeighborsRegressor(n_neighbors=n_neighbors)
+            st.write("Training the Model...")
+            knn.fit(X_train, y_train)
 
-        outputPredictedKNN = knn.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredictedKNN
+            st.write("Successfully Trained the model")
+            output_predicted_knn = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted_knn)
 
-        MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
-        st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
+            MSE_knn = mean_squared_error(output_predicted_knn, y_test)
+            st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
+            sc = np.round(knn.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
 
 #SVM
     elif selectModel == "Support Vector Machine":
