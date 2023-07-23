@@ -231,20 +231,41 @@ elif selectDataset == "Stock":
     elif selectModel == "K-Nearest Neighbors":
         
         st.subheader("K-Nearest Neighbors age estimation model")
-        knn = KNeighborsRegressor (n_neighbors = 10)
-        st.write("Training the Model...")
-        knn.fit (X_train, y_train)
+        # List of number of neighbors
+        neighbors = [15, 25, 50, 100]
+        # knn = KNeighborsRegressor (n_neighbors = 10)
+        # st.write("Training the Model...")
+        # knn.fit (X_train, y_train)
 
-        st.write("Successfully Train the model")
+        # st.write("Successfully Train the model")
 
-        outputPredictedKNN = knn.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredictedKNN
+        # outputPredictedKNN = knn.predict(X_test)
+        # st.write("Predicted result for Testing Dataset: ")
+        # outputPredictedKNN
 
-        MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
-        st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
+        # MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
+        # st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
         
+        for n in neighbors:
+            st.subheader("- - - - -")
+            st.write("Neighbor =",n)            
+            knn = KNeighborsRegressor(n_neighbors=n)
+            st.write("Training the Model...")
 
+            knn.fit(X_train, y_train)
+            st.write("Successfully Train the model")
+
+            outputPredictedKNN = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedKNN
+
+            MSEKNN = mean_squared_error (y_test,outputPredictedKNN)
+            st.write("The mean Squared Error Produced by KNN with number of nearest neighbors:",n,"=", MSEKNN)
+            kc= np.round(knn.score(X_test, y_test),2)*100
+            st.write("Accuracy score:",n,"=", kc)
+
+            # accuracy = accuracy_score(y_test,outputPredictedKNN)
+            # print("Neighbors=", n,"Accuracy:", accuracy)
 
 #SVM
     elif selectModel == "Support Vector Machine":
