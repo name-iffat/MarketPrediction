@@ -250,6 +250,9 @@ elif selectDataset == "Stock":
             st.write("The mean Squared Error Produced by n_estimator:",n,"=", MSERF)
             rc= np.round(rf.score(X_test, y_test),2)*100
             st.write("Accuracy score:",n,"=", rc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,outputPredictedRF),2)
+            st.write("R2 score:",n,"=", r2)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
@@ -290,6 +293,10 @@ elif selectDataset == "Stock":
 
             # accuracy = accuracy_score(y_test,outputPredictedKNN)
             # print("Neighbors=", n,"Accuracy:", accuracy)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,outputPredictedKNN),2)
+            st.write("R2 score:",n,"=", knnr2)
+
 
 #SVM
     elif selectModel == "Support Vector Machine":
@@ -313,6 +320,10 @@ elif selectDataset == "Stock":
         
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        rbfr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", rbfr2)
+
 
         st.write(" ")
         st.subheader("Linear")
@@ -331,6 +342,9 @@ elif selectDataset == "Stock":
         st.write("mean squared error: for kernel", "linear" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        linearr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", linearr2)
 
 
         st.write(" ")
@@ -350,6 +364,10 @@ elif selectDataset == "Stock":
         st.write("mean squared error: for kernel", "poly" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        polyr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", polyr2)
+
 
         st.write(" ")
         st.subheader("Sigmoid")
@@ -368,6 +386,10 @@ elif selectDataset == "Stock":
         st.write("mean squared error: for kernel", "sigmoid", svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        sigmoidr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", sigmoidr2)
+
 
 
 #COMMODITY PRICE
