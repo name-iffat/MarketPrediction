@@ -184,6 +184,22 @@ if selectDataset == "Forex":
 
 #STOCK PRICE
 elif selectDataset == "Stock":
+    st.subheader("Description of the dataset")
+    with st.columns(3)[1]:
+        st.image("image/amazon.jpg", width=400)
+    text = """
+    <style>
+    .justify-text {
+        text-align: justify;
+    }
+    </style>
+
+    <div class="justify-text">
+    There are 7 total columns and 851264 total rows in the dataset. The data was gathered for attributes including the date,symbol,open,close,low,high and volume. As the dataset consist of many stocks,this system will only sample an Amazon stock based on the symbol AMZN. The closing price of a stock is determined by its price at the end of the trading day, as opposed to the Close. The closing price, on the other hand, determines value by taking into account variables like dividends, stock splits, and new stock offerings. Therefore, Close is the outcome variable, and its value needs to be predicted.
+    </div>
+    """
+    
+    st.write(text, unsafe_allow_html=True)
 
     st.subheader("Full dataset for Stock")
     #your dataset
@@ -222,9 +238,9 @@ elif selectDataset == "Stock":
     y_train
 
     st.subheader("Testing data for input and target")
-    st.write("Training Data Input")
+    st.write("Testing Data Input")
     X_test
-    st.write("Training Data Target")
+    st.write("Testing Data Target")
     y_test
 
 #Algorithm selection
@@ -234,35 +250,71 @@ elif selectDataset == "Stock":
     if selectModel == "Random Forest":
 
         st.subheader("Random Forest age estimation model")
-        rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
-        st.write("Training the Model...")
-        rf.fit (X_train, y_train)
+        #List of number estimators
+        estimators = [15, 25, 50, 100]
+        for n in estimators:
+            st.subheader("- - - - -")
+            st.write("N Estimator =",n)            
 
-        st.write("Successfully Train the model")
-        outputPredicted50 = rf.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredicted50
+            rf = RandomForestRegressor (n_estimators = n, random_state = 0)
+            st.write("Training the Model...")
+            rf.fit (X_train, y_train)
 
-        MSE50 = mean_squared_error (outputPredicted50, y_test)
-        st.write("The mean Squared Error Produced by n_estimator = 50: ", MSE50)
+            st.write("Successfully Train the model")
+            outputPredictedRF = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedRF
+
+            MSERF = mean_squared_error (y_test,outputPredictedRF)
+            st.write("The mean Squared Error Produced by n_estimator:",n,"=", MSERF)
+            rc= np.round(rf.score(X_test, y_test),2)*100
+            st.write("Accuracy score:",n,"=", rc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,outputPredictedRF),2)
+            st.write("R2 score:",n,"=", r2)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
         
         st.subheader("K-Nearest Neighbors age estimation model")
-        knn = KNeighborsRegressor (n_neighbors = 10)
-        st.write("Training the Model...")
-        knn.fit (X_train, y_train)
+        # List of number of neighbors
+        neighbors = [15, 55, 100, 200]
+        # knn = KNeighborsRegressor (n_neighbors = 10)
+        # st.write("Training the Model...")
+        # knn.fit (X_train, y_train)
 
-        st.write("Successfully Train the model")
+        # st.write("Successfully Train the model")
 
-        outputPredictedKNN = knn.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredictedKNN
+        # outputPredictedKNN = knn.predict(X_test)
+        # st.write("Predicted result for Testing Dataset: ")
+        # outputPredictedKNN
 
-        MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
-        st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
+        # MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
+        # st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
         
+        for n in neighbors:
+            st.subheader("- - - - -")
+            st.write("Neighbor =",n)            
+            knn = KNeighborsRegressor(n_neighbors=n)
+            st.write("Training the Model...")
+
+            knn.fit(X_train, y_train)
+            st.write("Successfully Train the model")
+
+            outputPredictedKNN = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedKNN
+
+            MSEKNN = mean_squared_error (y_test,outputPredictedKNN)
+            st.write("The mean Squared Error Produced by KNN with number of nearest neighbors:",n,"=", MSEKNN)
+            kc= np.round(knn.score(X_test, y_test),2)*100
+            st.write("Accuracy score:",n,"=", kc)
+
+            # accuracy = accuracy_score(y_test,outputPredictedKNN)
+            # print("Neighbors=", n,"Accuracy:", accuracy)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,outputPredictedKNN),2)
+            st.write("R2 score:",n,"=", knnr2)
 
 
 #SVM
@@ -287,6 +339,10 @@ elif selectDataset == "Stock":
         
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        rbfr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", rbfr2)
+
 
         st.write(" ")
         st.subheader("Linear")
@@ -305,6 +361,9 @@ elif selectDataset == "Stock":
         st.write("mean squared error: for kernel", "linear" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        linearr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", linearr2)
 
 
         st.write(" ")
@@ -324,6 +383,10 @@ elif selectDataset == "Stock":
         st.write("mean squared error: for kernel", "poly" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        polyr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", polyr2)
+
 
         st.write(" ")
         st.subheader("Sigmoid")
@@ -342,10 +405,30 @@ elif selectDataset == "Stock":
         st.write("mean squared error: for kernel", "sigmoid", svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        sigmoidr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", sigmoidr2)
+
 
 
 #COMMODITY PRICE
 elif selectDataset == "Commodity":
+    st.subheader("Description of the dataset")
+    with st.columns(3)[1]:
+        st.image("image/gold.png", width=300)
+    text = """
+    <style>
+    .justify-text {
+        text-align: justify;
+    }
+    </style>
+
+    <div class="justify-text">
+    There are 80 total columns and 1718 total rows in the dataset. The data was gathered for attributes including the price of oil, the Standard and Poor's 500 index, the Dow Jones Index US Bond rates (10 years), the exchange rate between the euro and the dollar, the price of precious metals such as silver and platinum as well as other metals like palladium and rhodium, the price of the US Dollar Index, and the Eldorado Gold Corporation and Gold Miners ETF. The historical data for the Gold ETF is available in seven columns: Date, Open, High, Low, Close, Adjusted Close, and Volume. The closing price of a stock is determined by its price at the end of the trading day, as opposed to the Adjusted Close. The adjusted closing price, on the other hand, determines value by taking into account variables like dividends, stock splits, and new stock offerings. Therefore, Adjusted Close is the outcome variable, and its value needs to be predicted.
+    </div>
+    """
+    
+    st.write(text, unsafe_allow_html=True)
 
     st.subheader("Full dataset for Commodity")
     #your dataset
@@ -379,9 +462,9 @@ elif selectDataset == "Commodity":
     y_train
 
     st.subheader("Testing data for input and target")
-    st.write("Training Data Input")
+    st.write("Testing Data Input")
     X_test
-    st.write("Training Data Target")
+    st.write("Testing Data Target")
     y_test
 
 #Algorithm selection
@@ -389,36 +472,49 @@ elif selectDataset == "Commodity":
 
 #RANDOM FOREST
     if selectModel == "Random Forest":
+        n_estimators_list = [50, 100, 150, 200]
 
-        st.subheader("Random Forest age estimation model")
-        rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
-        st.write("Training the Model...")
-        rf.fit (X_train, y_train)
+        for n_estimators in n_estimators_list:
+            st.subheader(f"Random Forest age estimation model (n_estimators = {n_estimators})")
+            rf = RandomForestRegressor(n_estimators=n_estimators, random_state=0)
+            st.write("Training the Model...")
+            rf.fit(X_train, y_train)
 
-        st.write("Successfully Train the model")
-        outputPredicted50 = rf.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredicted50
+            st.write("Successfully Trained the model")
+            output_predicted = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted)
 
-        MSE50 = mean_squared_error (outputPredicted50, y_test)
-        st.write("The mean Squared Error Produced by n_estimator = 50: ", MSE50)
+            MSE = mean_squared_error(y_test,output_predicted)
+            st.write(f"The Mean Squared Error produced by n_estimators = {n_estimators}: ", MSE)
+            sc = np.round(rf.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,output_predicted),2)
+            st.write("R2 score:",n_estimators,"=", r2)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
-        
-        st.subheader("K-Nearest Neighbors age estimation model")
-        knn = KNeighborsRegressor (n_neighbors = 10)
-        st.write("Training the Model...")
-        knn.fit (X_train, y_train)
+        n_neighbors_list = [10, 15, 20, 100]
 
-        st.write("Successfully Train the model")
+        for n_neighbors in n_neighbors_list:
+            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            knn = KNeighborsRegressor(n_neighbors=n_neighbors)
+            st.write("Training the Model...")
+            knn.fit(X_train, y_train)
 
-        outputPredictedKNN = knn.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredictedKNN
+            st.write("Successfully Trained the model")
+            output_predicted_knn = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted_knn)
 
-        MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
-        st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
+            MSE_knn = mean_squared_error(y_test,output_predicted_knn)
+            st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
+            sc = np.round(knn.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,output_predicted_knn),2)
+            st.write("R2 score:",n_neighbors,"=", knnr2)
 
 #SVM
     elif selectModel == "Support Vector Machine":
@@ -437,11 +533,14 @@ elif selectDataset == "Commodity":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "rbf" , svm)
 
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        rbfr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", rbfr2)
 
         st.write(" ")
         st.subheader("Linear")
@@ -460,6 +559,9 @@ elif selectDataset == "Commodity":
         st.write("mean squared error: for kernel", "linear" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        linearr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", linearr2)
 
 
         st.write(" ")
@@ -479,6 +581,11 @@ elif selectDataset == "Commodity":
         st.write("mean squared error: for kernel", "poly" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        polyr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", polyr2)
+
+        
 
 
         st.write(" ")
@@ -498,6 +605,9 @@ elif selectDataset == "Commodity":
         st.write("mean squared error: for kernel", "sigmoid", svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        sigmoidr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", sigmoidr2)
 
 
 
