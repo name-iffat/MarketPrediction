@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.metrics import mean_squared_error, r2_score
 
 st.title("Group Project CSC649")
 st.header("Market Price Prediction")
@@ -27,21 +28,31 @@ if selectDataset == "Forex":
     
     st.subheader("Full dataset for Forex")
     #your dataset
-    male_dataset = pd.read_csv('xray_image_dataset_male.csv')
-    male_dataset
+    forex_dataset = pd.read_csv('EURUSD.csv')
+    forex_dataset
 
-    st.subheader("Data input for male")
-    data_input_training = male_dataset.drop(columns = ["Bil", "Race", "Gender", "DOB", "Exam Date", "Tanner", "Trunk HTcm"])
+    df = pd.DataFrame(forex_dataset)
+    df['time'] = pd.to_datetime(df['time'])
+    df['Year'] = df['time'].dt.year
+    df['Month'] = df['time'].dt.month
+    df['Day'] = df['time'].dt.day
+    df.drop(columns=['time'], inplace=True)
+    st.write(df.dtypes)
+
+     
+
+    st.subheader("Data input for Forex")
+    data_input_training = df.drop(columns=['close'])  
     data_input_training
 
-    st.subheader("Data target for male")
-    data_target_training = male_dataset['ChrAge']
+    st.subheader("Data target for Forex")
+    data_target_training = df['close']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
     X = data_input_training
     y = data_target_training
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
@@ -94,6 +105,8 @@ if selectDataset == "Forex":
 #SVM
     elif selectModel == "Support Vector Machine":
 
+       
+
         st.subheader("Support Vector Machine age estimation model")
         st.write(" ")
         st.subheader("RBF")
@@ -108,8 +121,11 @@ if selectDataset == "Forex":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
-        st.write("mean squared error: for kernel", "rbf" , svm)
+        mse = mean_squared_error(prediction,y_test)
+        st.write("mean squared error: for kernel", "rbf" , mse)
+
+        r2 = r2_score(y_test, prediction)
+        st.write("R-squared: for kernel", "rbf" , r2)
 
         st.write(" ")
         st.subheader("Linear")
@@ -124,8 +140,10 @@ if selectDataset == "Forex":
         st.write("Predicted result for linear Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "linear" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", svm)
 
 
         st.write(" ")
