@@ -11,17 +11,22 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+from PIL import Image
 
 st.title("Group Project CSC649")
 st.header("Market Price Prediction")
-st.write("UiTM Tapah Perak")
-st.write("MUHAMMAD AFIF FAHMI BIN RAFPI 2022764801")
-st.write("MUHAMMAD SYAFIQ BIN KHERUDDIN 2022949945")
-st.write("MUHAMMAD IFFAT HAIKAL BIN SAABAN HAFIZHI 2022978265")
-st.write("NUR ANIS KHAIRINA BINTI SHAHRUL ANUAR 2022780117")
-st.write("NURIN ADLINA BINTI MOHD NAZRI 2022947239")
+st.header("Looking to make smart investment decisions in the ever-changing financial landscape? \n")
+st.write("Discover the ultimate tool that can take your investment strategies to the next level. \n Introducing our state-of-the-art prediction model designed to help you navigate the complexities of forex, stocks, commodities, cryptocurrencies, and futures markets with confidence.")
+image = Image.open('image/banner.png')
 
+st.image(image, caption='Our cutting-edge prediction model leverages the latest advancements in artificial intelligence and machine learning. Powered by robust algorithms and historical market data, it analyzes trends, patterns, and price movements to make data-driven forecasts with impressive accuracy.')
 selectDataset = st.sidebar.selectbox ("Select Dataset", options = ["Home", "Forex", "Stock","Commodity","Cryptocurrency","Futures"])
+
+image = Image.open('image/team.png')
+
+st.image(image, caption='our team')
+
+st.header("The key to successful investing lies in being one step ahead. Our prediction model empowers you with the knowledge and confidence to execute trades strategically, minimizing risks, and maximizing potential gains.")
 
 #FOREX PRICE
 if selectDataset == "Forex":
