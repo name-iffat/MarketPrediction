@@ -21,38 +21,29 @@ st.write("MUHAMMAD IFFAT HAIKAL BIN SAABAN HAFIZHI 2022978265")
 st.write("NUR ANIS KHAIRINA BINTI SHAHRUL ANUAR 2022780117")
 st.write("NURIN ADLINA BINTI MOHD NAZRI 2022947239")
 
-selectDataset = st.sidebar.selectbox ("Select Dataset", options = ["Home", "Forex", "Stock","Commodity","Crytocurrrency","Real Estate"])
+selectDataset = st.sidebar.selectbox ("Select Dataset", options = ["Home", "Forex", "Stock","Commodity","Cryptocurrency","Futures"])
 
 #FOREX PRICE
 if selectDataset == "Forex":
     
     st.subheader("Full dataset for Forex")
     #your dataset
-    forex_dataset = pd.read_csv('EURUSD.csv')
+    forex_dataset = pd.read_csv('eurusd_hour.csv')
     forex_dataset
 
     df = pd.DataFrame(forex_dataset)
-    df['time'] = pd.to_datetime(df['time'])
-    df['Year'] = df['time'].dt.year
-    df['Month'] = df['time'].dt.month
-    df['Day'] = df['time'].dt.day
-    df.drop(columns=['time'], inplace=True)
-    st.write(df.dtypes)
-
-     
-
     st.subheader("Data input for Forex")
-    data_input_training = df.drop(columns=['close'])  
+    data_input_training = df.drop(columns=['BC','Date','Time'])  
     data_input_training
 
     st.subheader("Data target for Forex")
-    data_target_training = df['close']
+    data_target_training = df['BC']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
     X = data_input_training
     y = data_target_training
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
@@ -73,34 +64,53 @@ if selectDataset == "Forex":
     if selectModel == "Random Forest":
 
         st.subheader("Random Forest age estimation model")
-        rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
-        st.write("Training the Model...")
-        rf.fit (X_train, y_train)
+        #List of number estimators
+        estimators = [15, 25, 50, 100]
+        for n in estimators:
+            st.subheader("- - - - -")
+            st.write("N Estimator =",n)            
 
-        st.write("Successfully Train the model")
-        outputPredicted50 = rf.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredicted50
+            rf = RandomForestRegressor (n_estimators = n, random_state = 0)
+            st.write("Training the Model...")
+            rf.fit (X_train, y_train)
 
-        MSE50 = mean_squared_error (outputPredicted50, y_test)
-        st.write("The mean Squared Error Produced by n_estimator = 50: ", MSE50)
+            st.write("Successfully Train the model")
+            outputPredictedRF = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedRF
+
+            MSERF = mean_squared_error (y_test,outputPredictedRF)
+            st.write("The mean Squared Error Produced by n_estimator:",n,"=", MSERF)
+            rc= np.round(rf.score(X_test, y_test),2)*100
+            st.write("Accuracy score:",n,"=", rc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,outputPredictedRF),2)
+            st.write("R2 score:",n,"=", r2)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
         
-        st.subheader("K-Nearest Neighbors age estimation model")
-        knn = KNeighborsRegressor (n_neighbors = 10)
-        st.write("Training the Model...")
-        knn.fit (X_train, y_train)
+    
+        n_neighbors_list = [10, 15, 20, 100]
 
-        st.write("Successfully Train the model")
+        for n_neighbors in n_neighbors_list:
+            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            knn = KNeighborsRegressor(n_neighbors=n_neighbors)
+            st.write("Training the Model...")
+            knn.fit(X_train, y_train)
 
-        outputPredictedKNN = knn.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredictedKNN
+            st.write("Successfully Trained the model")
+            output_predicted_knn = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted_knn)
 
-        MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
-        st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
+            MSE_knn = mean_squared_error(y_test,output_predicted_knn)
+            st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
+            sc = np.round(knn.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,output_predicted_knn),2)
+            st.write("R2 score:",n_neighbors,"=", knnr2)
 
 #SVM
     elif selectModel == "Support Vector Machine":
@@ -121,11 +131,11 @@ if selectDataset == "Forex":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        mse = mean_squared_error(prediction,y_test)
-        st.write("mean squared error: for kernel", "rbf" , mse)
-
-        r2 = r2_score(y_test, prediction)
-        st.write("R-squared: for kernel", "rbf" , r2)
+        svm = mean_squared_error(y_test,prediction)
+        st.write("mean squared error: for kernel", "rbf" , svm)
+        
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
         st.write(" ")
         st.subheader("Linear")
@@ -143,7 +153,7 @@ if selectDataset == "Forex":
         svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "linear" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
-        st.write("Accuracy score:", svm)
+        st.write("Accuracy score:", sc)
 
 
         st.write(" ")
@@ -159,9 +169,10 @@ if selectDataset == "Forex":
         st.write("Predicted result for poly Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "poly" , svm)
-
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
         st.write(" ")
         st.subheader("Sigmoid")
@@ -176,8 +187,10 @@ if selectDataset == "Forex":
         st.write("Predicted result for sigmoid Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
-        st.write("mean squared error: for kernel", "sigmoid" , svm)
+        svm = mean_squared_error(y_test,prediction)
+        st.write("mean squared error: for kernel", "sigmoid", svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
         
 
 
@@ -616,15 +629,15 @@ elif selectDataset == "Cryptocurrency":
     st.subheader("Full dataset for Cryptocurrency")
     #your dataset
 
-    female_dataset = pd.read_csv('xray_image_dataset_female.csv')
-    female_dataset
+    coin_dataset = pd.read_csv('coin_XRP.csv')
+    coin_dataset
 
-    st.subheader("Data input for female")
-    data_input_training = female_dataset.drop(columns = ["No", "Race", "Gender", "DOB", "Exam Date", "Tanner", "Trunk HT (cm)"])
+    st.subheader("Data input for Cryptocurrency")
+    data_input_training = coin_dataset.drop(columns = ["unix","symbol","date","close"])
     data_input_training
 
-    st.subheader("Data target for female")
-    data_target_training = female_dataset['ChrAge']
+    st.subheader("Data target for Cryprocurrency")
+    data_target_training = coin_dataset['close']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
@@ -651,35 +664,52 @@ elif selectDataset == "Cryptocurrency":
     if selectModel == "Random Forest":
 
         st.subheader("Random Forest age estimation model")
-        rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
-        st.write("Training the Model...")
-        rf.fit (X_train, y_train)
+        #List of number estimators
+        estimators = [15, 25, 50, 100]
+        for n in estimators:
+            st.subheader("- - - - -")
+            st.write("N Estimator =",n)            
 
-        st.write("Successfully Train the model")
-        outputPredicted50 = rf.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredicted50
+            rf = RandomForestRegressor (n_estimators = n, random_state = 0)
+            st.write("Training the Model...")
+            rf.fit (X_train, y_train)
 
-        MSE50 = mean_squared_error (outputPredicted50, y_test)
-        st.write("The mean Squared Error Produced by n_estimator = 50: ", MSE50)
+            st.write("Successfully Train the model")
+            outputPredictedRF = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedRF
+
+            MSERF = mean_squared_error (y_test,outputPredictedRF)
+            st.write("The mean Squared Error Produced by n_estimator:",n,"=", MSERF)
+            rc= np.round(rf.score(X_test, y_test),2)*100
+            st.write("Accuracy score:",n,"=", rc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,outputPredictedRF),2)
+            st.write("R2 score:",n,"=", r2)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
         
-        st.subheader("K-Nearest Neighbors age estimation model")
-        knn = KNeighborsRegressor (n_neighbors = 10)
-        st.write("Training the Model...")
-        knn.fit (X_train, y_train)
+        n_neighbors_list = [10, 15, 20, 100]
 
-        st.write("Successfully Train the model")
+        for n_neighbors in n_neighbors_list:
+            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            knn = KNeighborsRegressor(n_neighbors=n_neighbors)
+            st.write("Training the Model...")
+            knn.fit(X_train, y_train)
 
-        outputPredictedKNN = knn.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredictedKNN
+            st.write("Successfully Trained the model")
+            output_predicted_knn = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted_knn)
 
-        MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
-        st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
-
+            MSE_knn = mean_squared_error(y_test,output_predicted_knn)
+            st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
+            sc = np.round(knn.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,output_predicted_knn),2)
+            st.write("R2 score:",n_neighbors,"=", knnr2)
 #SVM
     elif selectModel == "Support Vector Machine":
 
@@ -697,8 +727,14 @@ elif selectDataset == "Cryptocurrency":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "rbf" , svm)
+
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        rbfr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", rbfr2)
 
         st.write(" ")
         st.subheader("Linear")
@@ -713,8 +749,13 @@ elif selectDataset == "Cryptocurrency":
         st.write("Predicted result for linear Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "linear" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        linearr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", linearr2)
 
 
         st.write(" ")
@@ -730,8 +771,15 @@ elif selectDataset == "Cryptocurrency":
         st.write("Predicted result for poly Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "poly" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        polyr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", polyr2)
+
+        
 
 
         st.write(" ")
@@ -747,27 +795,33 @@ elif selectDataset == "Cryptocurrency":
         st.write("Predicted result for sigmoid Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "sigmoid", svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        sigmoidr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", sigmoidr2)
 
 
 
 #REAL ESTATE PRICE
-elif selectDataset == "Real Estate":
+elif selectDataset == "Futures":
 
     
-    st.subheader("Full dataset for Real Estate")
+    st.subheader("Full dataset for Futures")
     #your dataset
 
-    female_dataset = pd.read_csv('xray_image_dataset_female.csv')
-    female_dataset
+    re_dataset = pd.read_csv('gold2.csv')
+    re_dataset
+    df = pd.DataFrame(re_dataset)
 
-    st.subheader("Data input for female")
-    data_input_training = female_dataset.drop(columns = ["No", "Race", "Gender", "DOB", "Exam Date", "Tanner", "Trunk HT (cm)"])
+    st.subheader("Data input for Futures")
+    data_input_training = re_dataset.drop(columns = ["Close","Date"])
     data_input_training
 
-    st.subheader("Data target for female")
-    data_target_training = female_dataset['ChrAge']
+    st.subheader("Data target for Futures")
+    data_target_training = re_dataset['Close']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
@@ -794,34 +848,52 @@ elif selectDataset == "Real Estate":
     if selectModel == "Random Forest":
 
         st.subheader("Random Forest age estimation model")
-        rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
-        st.write("Training the Model...")
-        rf.fit (X_train, y_train)
+        #List of number estimators
+        estimators = [15, 25, 50, 100]
+        for n in estimators:
+            st.subheader("- - - - -")
+            st.write("N Estimator =",n)            
 
-        st.write("Successfully Train the model")
-        outputPredicted50 = rf.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredicted50
+            rf = RandomForestRegressor (n_estimators = n, random_state = 0)
+            st.write("Training the Model...")
+            rf.fit (X_train, y_train)
 
-        MSE50 = mean_squared_error (outputPredicted50, y_test)
-        st.write("The mean Squared Error Produced by n_estimator = 50: ", MSE50)
+            st.write("Successfully Train the model")
+            outputPredictedRF = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedRF
+
+            MSERF = mean_squared_error (y_test,outputPredictedRF)
+            st.write("The mean Squared Error Produced by n_estimator:",n,"=", MSERF)
+            rc= np.round(rf.score(X_test, y_test),2)*100
+            st.write("Accuracy score:",n,"=", rc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,outputPredictedRF),2)
+            st.write("R2 score:",n,"=", r2)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
         
-        st.subheader("K-Nearest Neighbors age estimation model")
-        knn = KNeighborsRegressor (n_neighbors = 10)
-        st.write("Training the Model...")
-        knn.fit (X_train, y_train)
+        n_neighbors_list = [10, 15, 20, 100]
 
-        st.write("Successfully Train the model")
+        for n_neighbors in n_neighbors_list:
+            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            knn = KNeighborsRegressor(n_neighbors=n_neighbors)
+            st.write("Training the Model...")
+            knn.fit(X_train, y_train)
 
-        outputPredictedKNN = knn.predict(X_test)
-        st.write("Predicted result for Testing Dataset: ")
-        outputPredictedKNN
+            st.write("Successfully Trained the model")
+            output_predicted_knn = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted_knn)
 
-        MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
-        st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
+            MSE_knn = mean_squared_error(y_test,output_predicted_knn)
+            st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
+            sc = np.round(knn.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,output_predicted_knn),2)
+            st.write("R2 score:",n_neighbors,"=", knnr2)
 
 #SVM
     elif selectModel == "Support Vector Machine":
@@ -840,8 +912,14 @@ elif selectDataset == "Real Estate":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "rbf" , svm)
+
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        rbfr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", rbfr2)
 
         st.write(" ")
         st.subheader("Linear")
@@ -856,8 +934,13 @@ elif selectDataset == "Real Estate":
         st.write("Predicted result for linear Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "linear" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        linearr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", linearr2)
 
 
         st.write(" ")
@@ -873,8 +956,15 @@ elif selectDataset == "Real Estate":
         st.write("Predicted result for poly Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "poly" , svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        polyr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", polyr2)
+
+        
 
 
         st.write(" ")
@@ -890,5 +980,10 @@ elif selectDataset == "Real Estate":
         st.write("Predicted result for sigmoid Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "sigmoid", svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        sigmoidr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", sigmoidr2)
