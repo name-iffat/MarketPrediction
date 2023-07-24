@@ -28,31 +28,26 @@ if selectDataset == "Forex":
     
     st.subheader("Full dataset for Forex")
     #your dataset
-    forex_dataset = pd.read_csv('EURUSD.csv')
+    forex_dataset = pd.read_csv('eurusd_hour.csv')
     forex_dataset
 
     df = pd.DataFrame(forex_dataset)
-    df['time'] = pd.to_datetime(df['time'])
-    df['Year'] = df['time'].dt.year
-    df['Month'] = df['time'].dt.month
-    df['Day'] = df['time'].dt.day
-    df.drop(columns=['time'], inplace=True)
-    st.write(df.dtypes)
+    
 
      
 
     st.subheader("Data input for Forex")
-    data_input_training = df.drop(columns=['close'])  
+    data_input_training = df.drop(columns=['BC','Date','Time'])  
     data_input_training
 
     st.subheader("Data target for Forex")
-    data_target_training = df['close']
+    data_target_training = df['BC']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
     X = data_input_training
     y = data_target_training
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
@@ -102,6 +97,9 @@ if selectDataset == "Forex":
         MSEKNN = mean_squared_error (outputPredictedKNN, y_test)
         st.write("The mean Squared Error Produced by KNN with number of nearest neighbors 10: ", MSEKNN)
 
+        sc= np.round(knn.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
+
 #SVM
     elif selectModel == "Support Vector Machine":
 
@@ -121,11 +119,11 @@ if selectDataset == "Forex":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        mse = mean_squared_error(prediction,y_test)
-        st.write("mean squared error: for kernel", "rbf" , mse)
-
-        r2 = r2_score(y_test, prediction)
-        st.write("R-squared: for kernel", "rbf" , r2)
+        svm = mean_squared_error(y_test,prediction)
+        st.write("mean squared error: for kernel", "rbf" , svm)
+        
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
         st.write(" ")
         st.subheader("Linear")
@@ -143,7 +141,7 @@ if selectDataset == "Forex":
         svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "linear" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
-        st.write("Accuracy score:", svm)
+        st.write("Accuracy score:", sc)
 
 
         st.write(" ")
@@ -159,9 +157,10 @@ if selectDataset == "Forex":
         st.write("Predicted result for poly Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "poly" , svm)
-
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
 
         st.write(" ")
         st.subheader("Sigmoid")
@@ -176,8 +175,10 @@ if selectDataset == "Forex":
         st.write("Predicted result for sigmoid Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
-        st.write("mean squared error: for kernel", "sigmoid" , svm)
+        svm = mean_squared_error(y_test,prediction)
+        st.write("mean squared error: for kernel", "sigmoid", svm)
+        sc= np.round(svm_model.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", sc)
         
 
 
