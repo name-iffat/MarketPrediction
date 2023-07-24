@@ -378,10 +378,13 @@ elif selectDataset == "Commodity":
             st.write("Predicted result for Testing Dataset:")
             st.write(output_predicted)
 
-            MSE = mean_squared_error(output_predicted, y_test)
+            MSE = mean_squared_error(y_test,output_predicted)
             st.write(f"The Mean Squared Error produced by n_estimators = {n_estimators}: ", MSE)
             sc = np.round(rf.score(X_test, y_test),2)*100
             st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,output_predicted),2)
+            st.write("R2 score:",n_estimators,"=", r2)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
@@ -398,10 +401,13 @@ elif selectDataset == "Commodity":
             st.write("Predicted result for Testing Dataset:")
             st.write(output_predicted_knn)
 
-            MSE_knn = mean_squared_error(output_predicted_knn, y_test)
+            MSE_knn = mean_squared_error(y_test,output_predicted_knn)
             st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
             sc = np.round(knn.score(X_test, y_test),2)*100
             st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,output_predicted_knn),2)
+            st.write("R2 score:",n_neighbors,"=", knnr2)
 
 #SVM
     elif selectModel == "Support Vector Machine":
@@ -420,11 +426,14 @@ elif selectDataset == "Commodity":
         st.write("Predicted result for RBF Testing Dataset: ")
         prediction
 
-        svm = mean_squared_error(prediction,y_test)
+        svm = mean_squared_error(y_test,prediction)
         st.write("mean squared error: for kernel", "rbf" , svm)
 
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        rbfr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", rbfr2)
 
         st.write(" ")
         st.subheader("Linear")
@@ -443,6 +452,9 @@ elif selectDataset == "Commodity":
         st.write("mean squared error: for kernel", "linear" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        linearr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", linearr2)
 
 
         st.write(" ")
@@ -462,6 +474,11 @@ elif selectDataset == "Commodity":
         st.write("mean squared error: for kernel", "poly" , svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        polyr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", polyr2)
+
+        
 
 
         st.write(" ")
@@ -481,6 +498,9 @@ elif selectDataset == "Commodity":
         st.write("mean squared error: for kernel", "sigmoid", svm)
         sc= np.round(svm_model.score(X_test, y_test),2)*100
         st.write("Accuracy score:", sc)
+        from sklearn.metrics import r2_score
+        sigmoidr2=np.round(r2_score(y_test,prediction),2)
+        st.write("R2 score:", sigmoidr2)
 
 
 
