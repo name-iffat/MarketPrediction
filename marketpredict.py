@@ -467,11 +467,11 @@ elif selectDataset == "Commodity":
     st.subheader("Full dataset for Commodity")
     #your dataset
 
-    commodity_dataset = pd.read_csv('final_USO.csv')
+    commodity_dataset = pd.read_csv('final_USO.csv',na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
     commodity_dataset
 
     st.subheader("Data input for Commodity")
-    data_input_training = commodity_dataset.drop(columns = ["Adj Close","Date"])
+    data_input_training = commodity_dataset.drop(columns = ["Adj Close"])
     data_input_training
 
     st.subheader("Data target for Commodity")
