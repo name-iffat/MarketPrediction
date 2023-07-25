@@ -12,6 +12,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 from PIL import Image
+from datetime import datetime
 
 selectDataset = st.sidebar.selectbox ("Select Dataset", options = ["Home", "Forex", "Stock","Commodity","Cryptocurrency","Futures"])
 
@@ -243,7 +244,7 @@ elif selectDataset == "Stock":
 
     st.subheader("Full dataset for Stock")
     #your dataset
-    stock = pd.read_csv('prices.csv')
+    stock = pd.read_csv('prices.csv',na_values=['null'],index_col='date',parse_dates=True,infer_datetime_format=True)
     stock
 
     #sampling amazon dataset
@@ -252,8 +253,7 @@ elif selectDataset == "Stock":
     stock1
 
     st.subheader("Data input for stock")
-    stock1.drop(columns = ["symbol"])
-    data_input_training = stock1[['volume','open']]
+    data_input_training = stock1.drop(columns = ["symbol", "close"])
     data_input_training
 
     st.subheader("Data target for stock")
@@ -526,7 +526,7 @@ elif selectDataset == "Commodity":
             from sklearn.metrics import r2_score
             r2=np.round(r2_score(y_test,output_predicted),2)
             st.write("R2 score:",n_estimators,"=", r2)
-
+    
 #KNN
     elif selectModel == "K-Nearest Neighbors":
         n_neighbors_list = [10, 15, 20, 100]
@@ -641,15 +641,41 @@ elif selectDataset == "Commodity":
             st.write("Predicted result for sigmoid Testing Dataset: ")
             prediction
 
-        svm = mean_squared_error(y_test,prediction)
-        st.write("mean squared error: for kernel", "sigmoid", svm)
-        sc= np.round(svm_model.score(X_test, y_test),2)*100
-        st.write("Accuracy score:", sc)
-        from sklearn.metrics import r2_score
-        sigmoidr2=np.round(r2_score(y_test,prediction),2)
-        st.write("R2 score:", sigmoidr2)
+            svm = mean_squared_error(y_test,prediction)
+            st.write("mean squared error: for kernel", "sigmoid", svm)
+            sc= np.round(svm_model.score(X_test, y_test),2)*100
+            st.write("Accuracy score:", sc)
+            from sklearn.metrics import r2_score
+            sigmoidr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", sigmoidr2)
+            model = svm_model
+            selectPredict = st.sidebar.selectbox ("Select Prediction", options = ["Predict This"])
+            def predict_target_value(selected_date):
+                # Convert user input date to string and then to numeric representation
+                selected_date_str = selected_date.strftime("%Y-%m-%d")
+                user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
 
+                # Prepare features for prediction (fill other features with default value, e.g., 0)
+                default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
+                user_features = [user_numeric_date] + default_features
 
+                # Scale the user input features
+                user_scaled = scaler.transform([user_features])
+
+                # Make prediction using the trained model
+                prediction = svm_model.predict(user_scaled)
+
+                return prediction[0]
+
+            # Set the title of the app
+            st.title("Predict Adjusted Close from Date")
+
+            # Add a date input widget
+            selected_date = st.date_input("Select a date", help="Choose a date")
+
+            if selected_date:
+                predicted_value = predict_target_value(selected_date)
+                st.write("Predicted Adjusted Close Value:", predicted_value)
 
 #CRYPTOCURRENCY PRICE
 elif selectDataset == "Cryptocurrency":
