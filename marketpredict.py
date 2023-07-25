@@ -838,12 +838,12 @@ elif selectDataset == "Futures":
     st.subheader("Full dataset for Futures")
     #your dataset
 
-    re_dataset = pd.read_csv('gold2.csv')
+    re_dataset = pd.read_csv('nifty50.csv')
     re_dataset
     df = pd.DataFrame(re_dataset)
 
     st.subheader("Data input for Futures")
-    data_input_training = re_dataset.drop(columns = ["Close","Date"])
+    data_input_training = df[["open","high","low","date"]]
     data_input_training
 
     missing_values = data_input_training.isnull().sum()
@@ -852,13 +852,13 @@ elif selectDataset == "Futures":
     st.write(missing_values)
 
     st.subheader("Data target for Futures")
-    data_target_training = re_dataset['Close']
+    data_target_training = re_dataset['close']
     data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
     X = data_input_training
     y = data_target_training
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=100)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
