@@ -839,38 +839,44 @@ elif selectDataset == "Futures":
     #your dataset
 
     re_dataset = pd.read_csv('nifty50.csv')
-    re_dataset
     df = pd.DataFrame(re_dataset)
 
+    # Determine the fraction of the data you want to keep 
+    fraction_to_keep = 100000 / len(df)
+
+    # Randomly sample a subset of the data
+    sampled_df = df.sample(frac=fraction_to_keep, random_state=42)
+
     st.subheader("Data input for Futures")
-    data_input_training = df[["open","high","low","date"]]
-    data_input_training
+    data_input_training = sampled_df[["open", "high", "low", "date"]]
+    st.write(data_input_training)
 
     missing_values = data_input_training.isnull().sum()
-
     st.subheader("Missing Values:")
     st.write(missing_values)
 
     st.subheader("Data target for Futures")
-    data_target_training = re_dataset['close']
-    data_target_training
+    # Use the sampled target data from 'sampled_df'
+    data_target_training = sampled_df['close']
+    st.write(data_target_training)
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
     X = data_input_training
     y = data_target_training
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=100)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
-    X_train
+    st.write(X_train)
     st.write("Training Data Target")
-    y_train
+    st.write(y_train)
 
     st.subheader("Testing data for input and target")
     st.write("Training Data Input")
-    X_test
+    st.write(X_test)
     st.write("Training Data Target")
-    y_test
+    st.write(y_test)
+
 
 #Algorithm selection
     selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest"])
