@@ -41,7 +41,7 @@ if selectDataset == "Forex":
     forex_dataset = pd.read_csv('eurusd_hour.csv')
 
     # Determine the fraction of the data you want to keep
-    fraction_to_keep = 50000 / len(forex_dataset)
+    fraction_to_keep = 8000 / len(forex_dataset)
 
     # Randomly sample a subset of the data
     sampled_df = forex_dataset.sample(frac=fraction_to_keep, random_state=42)
@@ -52,7 +52,7 @@ if selectDataset == "Forex":
 
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
@@ -117,7 +117,7 @@ if selectDataset == "Forex":
         st.write("R2 score:=", r2)
 
         # Create X_test using the same columns as X (for user input)
-        X_test = sampled_df[['BH', 'BO', 'BL', 'BC', 'BCh', 'AO', 'AH', 'AL', 'AC', 'ACh', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
+        X_test = sampled_df[['BH', 'BO', 'BL', 'AO', 'AH', 'AL','YEAR', 'MONTH', 'DAY', 'HOUR']]
 
         # Streamlit app
         st.subheader("Forex Close Price Prediction")
@@ -130,19 +130,17 @@ if selectDataset == "Forex":
         bh = st.slider("Highest Bid Price in that one hour period (BH)", min_value=float(X_test['BH'].min()), max_value=float(X_test['BH'].max()), key="bh_slider")
         bo = st.slider("Opening Bid Price (BO)", min_value=float(X_test['BO'].min()), max_value=float(X_test['BO'].max()), key="bo_slider")
         bl = st.slider("Lowest Bid Price in that one hour period (BL)", min_value=float(X_test['BL'].min()), max_value=float(X_test['BL'].max()), key="bl_slider")
-        bc = st.slider("Closing bid price (BC)", min_value=float(X_test['BC'].min()), max_value=float(X_test['BC'].max()), key="bc_slider")
-        bch = st.slider("Change between open and close price (BCh)", min_value=float(X_test['BCh'].min()), max_value=float(X_test['BCh'].max()), key="bch_slider")
         ao = st.slider("Opening ask price (AO)", min_value=float(X_test['AO'].min()), max_value=float(X_test['AO'].max()), key="ao_slider")
         ah = st.slider("Highest ask price in that one hour period (AH)", min_value=float(X_test['AH'].min()), max_value=float(X_test['AH'].max()), key="ah_slider")
         al = st.slider("Lowest ask price in that one hour period (AL)", min_value=float(X_test['AL'].min()), max_value=float(X_test['AL'].max()), key="al_slider")
+
+
 
         # Create a new input data point with user input
         new_data = pd.DataFrame({
             'BH': bh,
             'BO': bo,
             'BL': bl,
-            'BC': bc,
-            'BCh': bch,
             'AO': ao,
             'AH': ah,
             'AL': al,
