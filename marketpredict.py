@@ -38,33 +38,21 @@ if selectDataset == "Forex":
     
     st.subheader("Full dataset for Forex")
     #your dataset
+    # Load the full dataset
     forex_dataset = pd.read_csv('eurusd_hour.csv')
-    forex_dataset
 
+    # Determine the fraction of the data you want to keep
+    fraction_to_keep = 50000 / len(forex_dataset)
 
+    # Randomly sample a subset of the data
+    sampled_df = forex_dataset.sample(frac=fraction_to_keep, random_state=42)
 
+    # Split the data into input features (X) and target variable (y)
+    X = sampled_df[['BH', 'BO', 'BL', 'BC', 'BCh', 'AO', 'AH', 'AL', 'AC', 'ACh', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
+    y = sampled_df['BC']
 
-    df = pd.DataFrame(forex_dataset)
-    
-    st.subheader("Data input for Forex")
-    data_input_training = df.drop(columns=['BC','Date','Time'])  
-    data_input_training
-
-    missing_values = data_input_training.isnull().sum()
-
-    st.subheader("Missing Values:")
-    st.write(missing_values)
-
-    
-
-
-    st.subheader("Data target for Forex")
-    data_target_training = df['BC']
-    data_target_training
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
-    X = data_input_training
-    y = data_target_training
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     st.subheader("Training data for input and target")
@@ -744,7 +732,7 @@ elif selectDataset == "Cryptocurrency":
     coin_dataset
 
     st.subheader("Data input for Cryptocurrency")
-    data_input_training = coin_dataset.drop(columns = ["unix","symbol","date","close"])
+    data_input_training = coin_dataset.drop(columns = ["unix","symbol","date","close","Volume XRP","Volume USDT"])
     data_input_training
 
     missing_values = data_input_training.isnull().sum()
@@ -916,44 +904,58 @@ elif selectDataset == "Cryptocurrency":
 
 #REAL ESTATE PRICE
 elif selectDataset == "Futures":
-
+    from sklearn.impute import SimpleImputer
     
     st.subheader("Full dataset for Futures")
     #your dataset
 
-    re_dataset = pd.read_csv('gold2.csv')
-    re_dataset
+    re_dataset = pd.read_csv('FUTURES\Crude Oil.csv',nrows=1500)
     df = pd.DataFrame(re_dataset)
 
-    st.subheader("Data input for Futures")
-    data_input_training = re_dataset.drop(columns = ["Close","Date"])
+    # Replace '?' with NaN
+    re_dataset = re_dataset.replace('?', float('nan'))
+
+
+    st.subheader("Data input for Future")
+    data_input_training = re_dataset.drop(columns = ["Adj Close","Close","Date","Volume"])
     data_input_training
+
+
+    st.subheader("Data target for Commodity")
+    data_target_training = re_dataset['Close']
+    data_target_training
 
     missing_values = data_input_training.isnull().sum()
 
     st.subheader("Missing Values:")
     st.write(missing_values)
 
-    st.subheader("Data target for Futures")
-    data_target_training = re_dataset['Close']
-    data_target_training
+    # Drop rows with missing values from both X and y
+    data_input_training = data_input_training.dropna()
+    data_target_training = data_target_training.dropna()
+
+    # Handle missing data with SimpleImputer
+    imputer = SimpleImputer(strategy='mean')
+    X_imputed = imputer.fit_transform(data_input_training)
+
+    
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
-    X = data_input_training
     y = data_target_training
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_imputed, y, test_size=0.33, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
-    X_train
+    st.write(X_train)
     st.write("Training Data Target")
-    y_train
+    st.write(y_train)
 
     st.subheader("Testing data for input and target")
     st.write("Training Data Input")
-    X_test
+    st.write(X_test)
     st.write("Training Data Target")
-    y_test
+    st.write(y_test)
+
 
 #Algorithm selection
     selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest"])
@@ -1030,8 +1032,7 @@ elif selectDataset == "Futures":
             prediction
 
             svm = mean_squared_error(y_test,prediction)
-            st.write("mean squared error: for kernel", "rbf" , svm)
-            
+            st.write("mean squared error: for kernel", "poly" , svm)
             sc= np.round(svm_model.score(X_test, y_test),2)*100
             st.write("Accuracy score:", sc)
 
