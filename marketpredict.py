@@ -499,7 +499,7 @@ elif selectDataset == "Commodity":
     commodity_dataset
 
     st.subheader("Data input for Commodity")
-    data_input_training = commodity_dataset.drop(columns = ["Adj Close"])
+    data_input_training = commodity_dataset[["Open","High","Low","Volume"]]
     data_input_training
 
     st.subheader("Data target for Commodity")
@@ -557,14 +557,21 @@ elif selectDataset == "Commodity":
 
         model = rf
         selectPredict = st.sidebar.selectbox ("Select Prediction", options = ["Predict This"])
-        def predict_target_value(selected_date):
+        def predict_target_value(selected_date,open_value,low_value,high_value,volume_value):
             # Convert user input date to string and then to numeric representation
             selected_date_str = selected_date.strftime("%Y-%m-%d")
             user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
+            # Retrieve historical data for the selected date
+            # selected_data = commodity_dataset.loc[commodity_dataset['Date'] == selected_date_str]
 
+            # Extract the values of the other features from the historical data
+            # open_value = commodity_dataset['Open'].values[10]
+            # low_value = commodity_dataset['Low'].values[0]
+            # high_value = commodity_dataset['High'].values[0]
+            # volume_value = commodity_dataset['Volume'].values[0]
             # Prepare features for prediction (fill other features with default value, e.g., 0)
-            default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
-            user_features = [user_numeric_date] + default_features
+            default_features = [0] * (X_train.shape[1] - 5)  # Fill with zeros except for the date feature
+            user_features = [open_value, low_value, high_value, volume_value] 
 
             # Scale the user input features
             user_scaled = scaler.transform([user_features])
@@ -578,10 +585,16 @@ elif selectDataset == "Commodity":
         st.title("Predict Adjusted Close from Date")
 
         # Add a date input widget
-        selected_date = st.date_input("Select a date", help="Choose a date")
+        selected_date = st.sidebar.date_input("Select a date", help="Choose a date")
+        # Input fields for other features
+        open_value = st.sidebar.number_input("Open Value")
+        low_value = st.sidebar.number_input("Low Value")
+        high_value = st.sidebar.number_input("High Value")
+        volume_value = st.sidebar.number_input("Volume Value")
+
 
         if selected_date:
-            predicted_value = predict_target_value(selected_date)
+            predicted_value = predict_target_value(selected_date,open_value,low_value,high_value,volume_value)
             st.write("Predicted Adjusted Close Value:", predicted_value)
     
 #KNN
