@@ -37,7 +37,6 @@ if selectDataset == "Home":
 if selectDataset == "Forex":
     
     st.subheader("Full dataset for Forex")
-    #your dataset
     # Load the full dataset
     forex_dataset = pd.read_csv('eurusd_hour.csv')
 
@@ -48,7 +47,7 @@ if selectDataset == "Forex":
     sampled_df = forex_dataset.sample(frac=fraction_to_keep, random_state=42)
 
     # Split the data into input features (X) and target variable (y)
-    X = sampled_df[['BH', 'BO', 'BL', 'BC', 'BCh', 'AO', 'AH', 'AL', 'AC', 'ACh', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
+    X = sampled_df[['BH', 'BO', 'BL', 'AO', 'AH', 'AL', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
     y = sampled_df['BC']
 
 
@@ -68,7 +67,7 @@ if selectDataset == "Forex":
     y_test
 
 #Algorithm Selection
-    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest"])
+    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest","Prediction"])
 
 #RANDOM FOREST
     if selectModel == "Random Forest":
@@ -96,6 +95,74 @@ if selectDataset == "Forex":
             from sklearn.metrics import r2_score
             r2=np.round(r2_score(y_test,outputPredictedRF),2)
             st.write("R2 score:",n,"=", r2)
+
+    elif selectModel == "Prediction":
+        # Split the data into input features (X) and target variable (y)
+        X = sampled_df[['BH', 'BO', 'BL', 'AO', 'AH', 'AL', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
+        y = sampled_df['BC']
+
+        # Train the Random Forest model
+        rf = RandomForestRegressor(n_estimators=50, random_state=0)
+        rf.fit(X, y)
+        st.write("Successfully Train the model")
+        outputPredictedRF = rf.predict(X_test)
+        st.write("Predicted result for Testing Dataset: ")
+        outputPredictedRF
+        MSERF = mean_squared_error (y_test,outputPredictedRF)
+        st.write("The mean Squared Error Produced by n_estimator:=", MSERF)
+        rc= np.round(rf.score(X_test, y_test),2)*100
+        st.write("Accuracy score:=", rc)
+        from sklearn.metrics import r2_score
+        r2=np.round(r2_score(y_test,outputPredictedRF),2)
+        st.write("R2 score:=", r2)
+
+        # Create X_test using the same columns as X (for user input)
+        X_test = sampled_df[['BH', 'BO', 'BL', 'BC', 'BCh', 'AO', 'AH', 'AL', 'AC', 'ACh', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
+
+        # Streamlit app
+        st.subheader("Forex Close Price Prediction")
+        st.write("Enter the details below to predict the close price:")
+
+        year = st.text_input("Year (integer)", value=str(int(X_test['YEAR'].mean())))
+        month = st.text_input("Month (integer)", value=str(int(X_test['MONTH'].mean())))
+        day = st.text_input("Day (integer)", value=str(int(X_test['DAY'].mean())))
+        hour = st.text_input("Hour (integer)", value=str(int(X_test['HOUR'].mean())))
+        bh = st.slider("Highest Bid Price in that one hour period (BH)", min_value=float(X_test['BH'].min()), max_value=float(X_test['BH'].max()), key="bh_slider")
+        bo = st.slider("Opening Bid Price (BO)", min_value=float(X_test['BO'].min()), max_value=float(X_test['BO'].max()), key="bo_slider")
+        bl = st.slider("Lowest Bid Price in that one hour period (BL)", min_value=float(X_test['BL'].min()), max_value=float(X_test['BL'].max()), key="bl_slider")
+        bc = st.slider("Closing bid price (BC)", min_value=float(X_test['BC'].min()), max_value=float(X_test['BC'].max()), key="bc_slider")
+        bch = st.slider("Change between open and close price (BCh)", min_value=float(X_test['BCh'].min()), max_value=float(X_test['BCh'].max()), key="bch_slider")
+        ao = st.slider("Opening ask price (AO)", min_value=float(X_test['AO'].min()), max_value=float(X_test['AO'].max()), key="ao_slider")
+        ah = st.slider("Highest ask price in that one hour period (AH)", min_value=float(X_test['AH'].min()), max_value=float(X_test['AH'].max()), key="ah_slider")
+        al = st.slider("Lowest ask price in that one hour period (AL)", min_value=float(X_test['AL'].min()), max_value=float(X_test['AL'].max()), key="al_slider")
+
+        # Create a new input data point with user input
+        new_data = pd.DataFrame({
+            'BH': bh,
+            'BO': bo,
+            'BL': bl,
+            'BC': bc,
+            'BCh': bch,
+            'AO': ao,
+            'AH': ah,
+            'AL': al,
+            'YEAR': int(year),
+            'MONTH': int(month),
+            'DAY': int(day),
+            'HOUR': int(hour)
+        }, index=[0])
+
+        # Predict function
+        def predict_close_price():
+            # Make predictions using the trained model
+            predicted_close = rf.predict(new_data)
+            return predicted_close
+
+        # Predict button
+        if st.button("Predict"):
+            predicted_close_price = predict_close_price()
+            st.subheader("Predicted Close Price")
+            st.write(predicted_close_price)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
