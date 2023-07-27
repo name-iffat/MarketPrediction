@@ -791,13 +791,13 @@ elif selectDataset == "Commodity":
 elif selectDataset == "Cryptocurrency":
 
     st.subheader("Full dataset for Cryptocurrency")
-    #your dataset
 
     coin_dataset = pd.read_csv('coin_XRP.csv')
     coin_dataset
 
+
     st.subheader("Data input for Cryptocurrency")
-    data_input_training = coin_dataset.drop(columns = ["unix","symbol","date","close","Volume XRP","Volume USDT"])
+    data_input_training = coin_dataset.drop(columns = ["unix","symbol","date","close","Volume XRP","Volume USDT",'year','day'])
     data_input_training
 
     missing_values = data_input_training.isnull().sum()
@@ -827,7 +827,7 @@ elif selectDataset == "Cryptocurrency":
     y_test
 
 #Algorithm selection
-    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest"])
+    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest","Prediction"])
 
 #RANDOM FOREST
     if selectModel == "Random Forest":
@@ -855,6 +855,55 @@ elif selectDataset == "Cryptocurrency":
             from sklearn.metrics import r2_score
             r2=np.round(r2_score(y_test,outputPredictedRF),2)
             st.write("R2 score:",n,"=", r2)
+
+    elif selectModel == "Prediction":
+
+        rf = RandomForestRegressor(n_estimators=50, random_state=0)
+        rf.fit(X_train, y_train)
+
+        st.write("Successfully Train the model")
+        outputPredictedRF = rf.predict(X_test)
+        st.write("Predicted result for Testing Dataset: ")
+        outputPredictedRF
+
+        MSERF = mean_squared_error (y_test,outputPredictedRF)
+        st.write("The mean Squared Error Produced by n_estimator:", MSERF)
+        rc= np.round(rf.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", rc)
+        from sklearn.metrics import r2_score
+        r2=np.round(r2_score(y_test,outputPredictedRF),2)
+        st.write("R2 score:", r2)
+
+        # Streamlit app for user input
+        st.subheader("Cryptocurrency Close Price Prediction")
+        st.write("Enter the details below to predict the close price:")
+
+    
+        month = st.text_input("Month (integer)", value=str(int(X['month'].mean())))
+        high = st.slider("High", min_value=float(X['high'].min()), max_value=float(X['high'].max()), key="high_slider")
+        open_price = st.slider("Open", min_value=float(X['open'].min()), max_value=float(X['open'].max()), key="open_slider")
+        low = st.slider("Low", min_value=float(X['low'].min()), max_value=float(X['low'].max()), key="low_slider")
+        
+
+        # Create a new input data point with user input
+        new_data = pd.DataFrame({
+        'high': [high],
+        'low': [low],
+        'open': [open_price],
+        'month': int(month),
+    }, columns=X_train.columns)
+
+        # Predict function
+        def predict_close_price():
+            # Make predictions using the trained model
+            predicted_close = rf.predict(new_data)
+            return predicted_close
+
+        # Predict button
+        if st.button("Predict"):
+            predicted_close_price = predict_close_price()
+            st.subheader("Predicted Close Price")
+            st.write(predicted_close_price)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
@@ -982,7 +1031,7 @@ elif selectDataset == "Futures":
 
 
     st.subheader("Data input for Future")
-    data_input_training = re_dataset.drop(columns = ["Adj Close","Close","Date","Volume"])
+    data_input_training = re_dataset.drop(columns = ["Adj Close","Close","Date","Volume","day","year"])
     data_input_training
 
 
@@ -1023,7 +1072,7 @@ elif selectDataset == "Futures":
 
 
 #Algorithm selection
-    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest"])
+    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest","Prediction"])
 
 #RANDOM FOREST
     if selectModel == "Random Forest":
@@ -1051,6 +1100,55 @@ elif selectDataset == "Futures":
             from sklearn.metrics import r2_score
             r2=np.round(r2_score(y_test,outputPredictedRF),2)
             st.write("R2 score:",n,"=", r2)
+
+    elif selectModel == "Prediction":
+
+        rf = RandomForestRegressor(n_estimators=50, random_state=0)
+        rf.fit(X_train, y_train)
+
+        st.write("Successfully Train the model")
+        outputPredictedRF = rf.predict(X_test)
+        st.write("Predicted result for Testing Dataset: ")
+        outputPredictedRF
+
+        MSERF = mean_squared_error (y_test,outputPredictedRF)
+        st.write("The mean Squared Error Produced by n_estimator:", MSERF)
+        rc= np.round(rf.score(X_test, y_test),2)*100
+        st.write("Accuracy score:", rc)
+        from sklearn.metrics import r2_score
+        r2=np.round(r2_score(y_test,outputPredictedRF),2)
+        st.write("R2 score:", r2)
+
+        # Streamlit app for user input
+        st.subheader("Futures Close Price Prediction")
+        st.write("Enter the details below to predict the close price:")
+
+        month = st.text_input("Month (integer)", value=str(int(data_input_training['month'].mean())))
+        high = st.slider("High", min_value=float(data_input_training['High'].min()), max_value=float(data_input_training['High'].max()), key="high_slider")
+        open_price = st.slider("Open", min_value=float(data_input_training['Open'].min()), max_value=float(data_input_training['Open'].max()), key="open_slider")
+        low = st.slider("Low", min_value=float(data_input_training['Low'].min()), max_value=float(data_input_training['Low'].max()), key="low_slider")
+        
+
+        # Create a new input data point with user input
+        new_data = pd.DataFrame({
+            'High': [high],
+            'Low': [low],
+            'Open': [open_price],
+            'month': [int(month)]
+        })
+
+
+        # Predict function
+        def predict_close_price():
+            # Make predictions using the trained model
+            predicted_close = rf.predict(new_data)
+            return predicted_close
+
+        # Predict button
+        if st.button("Predict"):
+            predicted_close_price = predict_close_price()
+            st.subheader("Predicted Close Price")
+            st.write(predicted_close_price)     
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
