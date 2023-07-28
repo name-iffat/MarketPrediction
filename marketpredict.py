@@ -307,7 +307,7 @@ elif selectDataset == "Stock":
     stock1
 
     st.subheader("Data input for stock")
-    data_input_training = stock1.drop(columns = ["symbol", "close"])
+    data_input_training = stock1.drop(columns = ["date","symbol", "close","volume"])
     data_input_training
 
     st.subheader("Data target for stock")
