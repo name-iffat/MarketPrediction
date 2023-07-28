@@ -79,7 +79,7 @@ if selectDataset == "Forex":
 #RANDOM FOREST
     if selectModel == "Random Forest":
 
-        st.subheader("Random Forest age estimation model")
+        st.subheader("Random Forest  market estimation model")
         #List of number estimators
         estimators = [15, 25, 50, 100]
         for n in estimators:
@@ -176,7 +176,7 @@ if selectDataset == "Forex":
         n_neighbors_list = [10, 15, 20, 100]
 
         for n_neighbors in n_neighbors_list:
-            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            st.subheader(f"K-Nearest Neighbors  market estimation model (n_neighbors = {n_neighbors})")
             knn = KNeighborsRegressor(n_neighbors=n_neighbors)
             st.write("Training the Model...")
             knn.fit(X_train, y_train)
@@ -201,7 +201,7 @@ if selectDataset == "Forex":
 
         if selectKernel == "RBF":
 
-            st.subheader("Support Vector Machine age estimation model")
+            st.subheader("Support Vector Machine  market estimation model")
             st.write(" ")
             st.subheader("RBF")
             svm_model = SVR(kernel="rbf")
@@ -350,7 +350,7 @@ elif selectDataset == "Stock":
 #RANDOM FOREST
     if selectModel == "Random Forest":
 
-        st.subheader("Random Forest age estimation model")
+        st.subheader("Random Forest  market estimation model")
         #List of number estimators
         estimators = [15, 25, 50, 100]
         for n in estimators:
@@ -455,7 +455,7 @@ elif selectDataset == "Stock":
 #KNN
     elif selectModel == "K-Nearest Neighbors":
         
-        st.subheader("K-Nearest Neighbors age estimation model")
+        st.subheader("K-Nearest Neighbors  market estimation model")
         # List of number of neighbors
         neighbors = [15, 55, 100, 200]
         # knn = KNeighborsRegressor (n_neighbors = 10)
@@ -502,7 +502,7 @@ elif selectDataset == "Stock":
         selectKernel = st.sidebar.selectbox ("Select Kernel", options = ["RBF", "Linear", "Sigmoid", "Poly"])
        
         if selectKernel == "RBF":
-            st.subheader("Support Vector Machine age estimation model")
+            st.subheader("Support Vector Machine  market estimation model")
             st.write(" ")
             st.subheader("RBF")
             svm_model = SVR(kernel="rbf")
@@ -645,7 +645,7 @@ elif selectDataset == "Commodity":
 #RANDOM FOREST
     if selectModel == "Random Forest":
         n_estimators_list = [15, 25, 50, 100]
-        st.subheader(f"Random Forest age estimation model")
+        st.subheader(f"Random Forest  market estimation model")
         
         for n_estimators in n_estimators_list:
             st.subheader("- - - - -")
@@ -699,7 +699,7 @@ elif selectDataset == "Commodity":
         n_neighbors_list = [10, 15, 20, 100]
 
         for n_neighbors in n_neighbors_list:
-            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            st.subheader(f"K-Nearest Neighbors  market estimation model (n_neighbors = {n_neighbors})")
             knn = KNeighborsRegressor(n_neighbors=n_neighbors)
             st.write("Training the Model...")
             knn.fit(X_train, y_train)
@@ -721,7 +721,7 @@ elif selectDataset == "Commodity":
         selectKernel = st.sidebar.selectbox ("Select Kernel", options = ["RBF", "Linear", "Sigmoid", "Poly"])
        
         if selectKernel == "RBF":
-            st.subheader("Support Vector Machine age estimation model")
+            st.subheader("Support Vector Machine  market estimation model")
             st.write(" ")
             st.subheader("RBF")
             svm_model = SVR(kernel="rbf")
@@ -895,7 +895,7 @@ elif selectDataset == "Cryptocurrency":
 #RANDOM FOREST
     if selectModel == "Random Forest":
 
-        st.subheader("Random Forest age estimation model")
+        st.subheader("Random Forest  market estimation model")
         #List of number estimators
         estimators = [15, 25, 50, 100]
         for n in estimators:
@@ -974,7 +974,7 @@ elif selectDataset == "Cryptocurrency":
         n_neighbors_list = [10, 15, 20, 100]
 
         for n_neighbors in n_neighbors_list:
-            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            st.subheader(f"K-Nearest Neighbors  market estimation model (n_neighbors = {n_neighbors})")
             knn = KNeighborsRegressor(n_neighbors=n_neighbors)
             st.write("Training the Model...")
             knn.fit(X_train, y_train)
@@ -997,7 +997,7 @@ elif selectDataset == "Cryptocurrency":
         selectKernel = st.sidebar.selectbox ("Select Kernel", options = ["RBF", "Linear", "Sigmoid", "Poly"])
        
         if selectKernel == "RBF":
-            st.subheader("Support Vector Machine age estimation model")
+            st.subheader("Support Vector Machine  market estimation model")
             st.write(" ")
             st.subheader("RBF")
             svm_model = SVR(kernel="rbf")
@@ -1147,7 +1147,7 @@ elif selectDataset == "Futures":
 #RANDOM FOREST
     if selectModel == "Random Forest":
 
-        st.subheader("Random Forest age estimation model")
+        st.subheader("Random Forest  market estimation model")
         #List of number estimators
         estimators = [15, 25, 50, 100]
         for n in estimators:
@@ -1226,7 +1226,7 @@ elif selectDataset == "Futures":
         n_neighbors_list = [10, 15, 20, 100]
 
         for n_neighbors in n_neighbors_list:
-            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            st.subheader(f"K-Nearest Neighbors  market estimation model (n_neighbors = {n_neighbors})")
             knn = KNeighborsRegressor(n_neighbors=n_neighbors)
             st.write("Training the Model...")
             knn.fit(X_train, y_train)
@@ -1250,7 +1250,7 @@ elif selectDataset == "Futures":
         selectKernel = st.sidebar.selectbox ("Select Kernel", options = ["RBF", "Linear", "Sigmoid", "Poly"])
        
         if selectKernel == "RBF":
-            st.subheader("Support Vector Machine age estimation model")
+            st.subheader("Support Vector Machine  market estimation model")
             st.write(" ")
             st.subheader("RBF")
             svm_model = SVR(kernel="rbf")
