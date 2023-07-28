@@ -843,6 +843,111 @@ elif selectDataset == "Commodity":
                 st.subheader("Predicted Close Price")
                 st.write(predicted_close_price)
 
+    
+#KNN
+    elif selectModel == "K-Nearest Neighbors":
+        n_neighbors_list = [10, 15, 20, 100]
+
+        for n_neighbors in n_neighbors_list:
+            st.subheader(f"K-Nearest Neighbors model (n_neighbors = {n_neighbors})")
+            knn = KNeighborsRegressor(n_neighbors=n_neighbors)
+            st.write("Training the Model...")
+            knn.fit(X_train, y_train)
+
+            st.write("Successfully Trained the model")
+            output_predicted_knn = knn.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted_knn)
+
+            MSE_knn = mean_squared_error(y_test,output_predicted_knn)
+            st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
+            from sklearn.metrics import r2_score
+            knnr2=np.round(r2_score(y_test,output_predicted_knn),2)
+            st.write("R2 score:",n_neighbors,"=", knnr2)
+
+#SVM
+    elif selectModel == "Support Vector Machine":
+
+        selectKernel = st.sidebar.selectbox ("Select Kernel", options = ["RBF", "Linear", "Sigmoid", "Poly"])
+       
+        if selectKernel == "RBF":
+            st.subheader("Support Vector Machine model")
+            st.write(" ")
+            st.subheader("RBF")
+            svm_model = SVR(kernel="rbf")
+            st.write("Training the Model...")
+            svm_model.fit(X_train, y_train)
+
+            st.write("Successfully Train the model")
+            prediction = svm_model.predict(X_test)
+            st.write("Predicted result for RBF Testing Dataset: ")
+            prediction
+
+            svm = mean_squared_error(y_test,prediction)
+            st.write("mean squared error: for kernel", "rbf" , svm)
+
+            from sklearn.metrics import r2_score
+            rbfr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", rbfr2)
+
+            st.write(" ")
+
+        elif selectKernel == "Linear":
+            st.subheader("Linear")
+            svm_model = SVR(kernel="linear")
+            st.write("Training the Model...")
+            svm_model.fit(X_train, y_train)
+
+            st.write("Successfully Train the model")
+            prediction = svm_model.predict(X_test)
+            st.write("Predicted result for linear Testing Dataset: ")
+            prediction
+
+            svm = mean_squared_error(y_test,prediction)
+            st.write("mean squared error: for kernel", "linear" , svm)
+            from sklearn.metrics import r2_score
+            linearr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", linearr2)
+
+
+            st.write(" ")
+
+        elif selectKernel == "Poly":
+            st.subheader("Poly")
+            svm_model = SVR(kernel="poly")
+            st.write("Training the Model...")
+            svm_model.fit(X_train, y_train)
+
+            st.write("Successfully Train the model")
+            prediction = svm_model.predict(X_test)
+            st.write("Predicted result for poly Testing Dataset: ")
+            prediction
+
+            svm = mean_squared_error(y_test,prediction)
+            st.write("mean squared error: for kernel", "poly" , svm)
+            from sklearn.metrics import r2_score
+            polyr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", polyr2)
+
+    
+            st.write(" ")
+        elif selectKernel == "Sigmoid":
+            st.subheader("Sigmoid")
+            svm_model = SVR(kernel="sigmoid")
+            st.write("Training the Model...")
+            svm_model.fit(X_train, y_train)
+
+            st.write("Successfully Train the model")
+            prediction = svm_model.predict(X_test)
+            st.write("Predicted result for sigmoid Testing Dataset: ")
+            prediction
+
+            svm = mean_squared_error(y_test,prediction)
+            st.write("mean squared error: for kernel", "sigmoid", svm)
+            from sklearn.metrics import r2_score
+            sigmoidr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", sigmoidr2)
+            
 #CRYPTOCURRENCY PRICE
 elif selectDataset == "Cryptocurrency":
 
