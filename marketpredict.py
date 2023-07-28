@@ -308,7 +308,7 @@ elif selectDataset == "Stock":
     stock1
 
     st.subheader("Data input for stock")
-    data_input_training = stock1.drop(columns = ["symbol", "close"])
+    data_input_training = stock1.drop(columns = ["symbol", "close","volume"])
     data_input_training
 
     st.subheader("Data target for stock")
@@ -320,10 +320,10 @@ elif selectDataset == "Stock":
     y = data_target_training
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-    from sklearn.preprocessing import StandardScaler
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test =scaler.transform(X_test)
+    # from sklearn.preprocessing import StandardScaler
+    # scaler = StandardScaler()
+    # X_train = scaler.fit_transform(X_train)
+    # X_test =scaler.transform(X_test)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
@@ -339,7 +339,7 @@ elif selectDataset == "Stock":
     y_test
 
 #Algorithm selection
-    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest"])
+    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest", "Prediction"])
 
 #RANDOM FOREST
     if selectModel == "Random Forest":
@@ -367,34 +367,80 @@ elif selectDataset == "Stock":
             from sklearn.metrics import r2_score
             r2=np.round(r2_score(y_test,outputPredictedRF),2)
             st.write("R2 score:",n,"=", r2)
-        model = rf
-        selectPredict = st.sidebar.selectbox ("Select Prediction", options = ["Predict This"])
-        def predict_target_value(selected_date):
+        
+    elif selectModel == "Prediction":
+            # Function to extract useful features from the date
+            def extract_date_features(df):
+                stock1['date'] = pd.to_datetime(stock1['date'])
+                stock1['year'] = stock1['date'].dt.year
+                df['month'] = df['date'].dt.month
+                df['day'] = df['date'].dt.day
+                return stock1.drop(columns=['date'])
+
+            X = stock1.drop(columns = ["symbol", "close","volume"])
+            y = stock1['close']
+            # Train the Random Forest model
+            rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
+            st.write("Training the Model...")
+            rf.fit (X_train, y_train)
+
+            st.write("Successfully Train the model")
+            outputPredictedRF = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedRF
+
+            MSERF = mean_squared_error (y_test,outputPredictedRF)
+            st.write("The mean Squared Error Produced by n_estimator=", MSERF)
+            rc= np.round(rf.score(X_test, y_test),2)*100
+            st.write("Accuracy score=", rc)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,outputPredictedRF),2)
+            st.write("R2 score:=", r2)
+
+            # Create X_test using the same columns as X (for user input)
+            X_test = stock1.drop(columns = ["symbol", "close","volume"])
+
+            def predict_target_value(sd):
             # Convert user input date to string and then to numeric representation
-            selected_date_str = selected_date.strftime("%Y-%m-%d")
-            user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
+                selected_date_str = sd.strftime("%Y-%m-%d")
+                user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
+                # Prepare features for prediction (fill other features with default value, e.g., 0)
+                default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
+                #user_features = [user_numeric_date] + default_features
+                return user_numeric_date
+            
+            # Streamlit app
+            st.subheader("Amazon Stock Close Price Prediction")
+            st.write("Enter the details below to predict the close price:")
 
-            # Prepare features for prediction (fill other features with default value, e.g., 0)
-            default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
-            user_features = [user_numeric_date] + default_features
+            sd = st.date_input("Select a date", help="Choose a date")
+            if sd:
+                predicted_value = predict_target_value(sd)
+                year = sd.year
+                st.write(year)
+            sh = st.slider("Highest Bid Price in that one hour period (high)", min_value=float(X_test['high'].min()), max_value=float(X_test['high'].max()), key="sh_slider")
+            so = st.slider("Opening Bid Price (open)", min_value=float(X_test['open'].min()), max_value=float(X_test['open'].max()), key="so_slider")
+            sl = st.slider("Lowest Bid Price in that one hour period (slow)", min_value=float(X_test['low'].min()), max_value=float(X_test['low'].max()), key="sl_slider")
 
-            # Scale the user input features
-            user_scaled = scaler.transform([user_features])
+            # Create a new input data point with user input
+            new_data = pd.DataFrame({
+                'open': so,
+                'low':  sl,
+                'high': sh,
+                'year': [sd.year],
+            }, index=[0])
 
-            # Make prediction using the trained model
-            prediction = rf.predict(user_scaled)
-
-            return prediction[0]
-
-        # Set the title of the app
-        st.title("Predict Adjusted Close from Date")
-
-        # Add a date input widget
-        selected_date = st.date_input("Select a date", help="Choose a date")
-
-        if selected_date:
-            predicted_value = predict_target_value(selected_date)
-            st.write("Predicted Adjusted Close Value:", predicted_value)
+            # Predict function
+            def predict_close_price():
+                # Make predictions using the trained model
+                predicted_close = rf.predict(new_data)
+                return predicted_close
+            
+            # Predict button
+            if st.button("Predict"):
+                predicted_close_price = predict_close_price()
+                st.subheader("Predicted Close Price")
+                st.write(predicted_close_price)
 
 #KNN
     elif selectModel == "K-Nearest Neighbors":
