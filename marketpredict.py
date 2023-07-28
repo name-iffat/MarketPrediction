@@ -539,7 +539,8 @@ elif selectDataset == "Commodity":
     </style>
 
     <div class="justify-text">
-    There are 80 total columns and 1718 total rows in the dataset. The data was gathered for attributes including the price of oil, the Standard and Poor's 500 index, the Dow Jones Index US Bond rates (10 years), the exchange rate between the euro and the dollar, the price of precious metals such as silver and platinum as well as other metals like palladium and rhodium, the price of the US Dollar Index, and the Eldorado Gold Corporation and Gold Miners ETF. The historical data for the Gold ETF is available in seven columns: Date, Open, High, Low, Close, Adjusted Close, and Volume. The closing price of a stock is determined by its price at the end of the trading day, as opposed to the Adjusted Close. The adjusted closing price, on the other hand, determines value by taking into account variables like dividends, stock splits, and new stock offerings. Therefore, Adjusted Close is the outcome variable, and its value needs to be predicted.
+    There are 80 total columns and 1718 total rows in the dataset. The data was gathered for attributes including the price of oil, the Standard and Poor's 500 index, the Dow Jones Index US Bond rates (10 years), the exchange rate between the euro and the dollar, the price of precious metals such as silver and platinum as well as other metals like palladium and rhodium, the price of the US Dollar Index, the Eldorado Gold Corporation and Gold Miners ETF. The historical data for the Gold ETF is available in seven columns: Date, Open, High, Low, Close, Adjusted Close and Volume. The closing price of a stock is determined by its price at the end of the trading day, as opposed to the Adjusted Close. The adjusted closing price determines value by taking into account variables like dividends, stock splits and new stock offerings. Therefore, Adjusted Close is the outcome variable and its value needs to be predicted.
+    <br><br>
     </div>
     """
     
@@ -551,11 +552,11 @@ elif selectDataset == "Commodity":
     commodity = pd.read_csv('final_USO.csv')
     commodity
 
-    st.subheader("Data input for commodity")
+    st.subheader("Data input for Commodity")
     data_input_training = commodity[['Open', 'High', 'Low', 'Year','Month','Day']]
     data_input_training
 
-    st.subheader("Data target for commodity")
+    st.subheader("Data target for Commodity")
     data_target_training = commodity['Adj Close']
     data_target_training
 
@@ -582,10 +583,10 @@ elif selectDataset == "Commodity":
 #RANDOM FOREST
     if selectModel == "Random Forest":
         n_estimators_list = [15, 25, 50, 100]
-        st.subheader(f"Random Forest age estimation model")
+        st.subheader(f"Random Forest model")
         
         for n_estimators in n_estimators_list:
-            st.subheader("- - - - -")
+            st.subheader("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
             st.write("N Estimator =",n_estimators)   
             rf = RandomForestRegressor(n_estimators=n_estimators, random_state=0)
             st.write("Training the Model...")
@@ -625,8 +626,6 @@ elif selectDataset == "Commodity":
 
             MSERF = mean_squared_error (y_test,outputPredictedRF)
             st.write("The mean Squared Error Produced by n_estimator=", MSERF)
-            rc= np.round(rf.score(X_test, y_test),2)*100
-            st.write("Accuracy score=", rc)
             from sklearn.metrics import r2_score
             r2=np.round(r2_score(y_test,outputPredictedRF),2)
             st.write("R2 score:=", r2)
@@ -654,9 +653,9 @@ elif selectDataset == "Commodity":
                 month = sd.month
                 day = sd.day
 
-            op = st.slider("Open", min_value=float(X_test['Open'].min()), max_value=float(X_test['Open'].max()), key="open_slider")
-            hi = st.slider("High", min_value=float(X_test['High'].min()), max_value=float(X_test['High'].max()), key="high_slider")
-            lo = st.slider("Low", min_value=float(X_test['Low'].min()), max_value=float(X_test['Low'].max()), key="low_slider")
+            op = st.slider("Gold ETF Open Price", min_value=float(X_test['Open'].min()), max_value=float(X_test['Open'].max()), key="open_slider")
+            hi = st.slider("Gold ETF High Price", min_value=float(X_test['High'].min()), max_value=float(X_test['High'].max()), key="high_slider")
+            lo = st.slider("Gold ETF Low Price", min_value=float(X_test['Low'].min()), max_value=float(X_test['Low'].max()), key="low_slider")
 
             # Create a new input data point with user input
             new_data = pd.DataFrame({
@@ -686,7 +685,7 @@ elif selectDataset == "Commodity":
         n_neighbors_list = [10, 15, 20, 100]
 
         for n_neighbors in n_neighbors_list:
-            st.subheader(f"K-Nearest Neighbors age estimation model (n_neighbors = {n_neighbors})")
+            st.subheader(f"K-Nearest Neighbors model (n_neighbors = {n_neighbors})")
             knn = KNeighborsRegressor(n_neighbors=n_neighbors)
             st.write("Training the Model...")
             knn.fit(X_train, y_train)
@@ -708,7 +707,7 @@ elif selectDataset == "Commodity":
         selectKernel = st.sidebar.selectbox ("Select Kernel", options = ["RBF", "Linear", "Sigmoid", "Poly"])
        
         if selectKernel == "RBF":
-            st.subheader("Support Vector Machine age estimation model")
+            st.subheader("Support Vector Machine model")
             st.write(" ")
             st.subheader("RBF")
             svm_model = SVR(kernel="rbf")
@@ -716,8 +715,6 @@ elif selectDataset == "Commodity":
             svm_model.fit(X_train, y_train)
 
             st.write("Successfully Train the model")
-
-            st.write("SVM", "rbf", "Prediction")
             prediction = svm_model.predict(X_test)
             st.write("Predicted result for RBF Testing Dataset: ")
             prediction
@@ -725,8 +722,6 @@ elif selectDataset == "Commodity":
             svm = mean_squared_error(y_test,prediction)
             st.write("mean squared error: for kernel", "rbf" , svm)
 
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
             from sklearn.metrics import r2_score
             rbfr2=np.round(r2_score(y_test,prediction),2)
             st.write("R2 score:", rbfr2)
@@ -740,16 +735,12 @@ elif selectDataset == "Commodity":
             svm_model.fit(X_train, y_train)
 
             st.write("Successfully Train the model")
-
-            st.write("SVM", "linear", "Prediction")
             prediction = svm_model.predict(X_test)
             st.write("Predicted result for linear Testing Dataset: ")
             prediction
 
             svm = mean_squared_error(y_test,prediction)
             st.write("mean squared error: for kernel", "linear" , svm)
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
             from sklearn.metrics import r2_score
             linearr2=np.round(r2_score(y_test,prediction),2)
             st.write("R2 score:", linearr2)
@@ -764,16 +755,12 @@ elif selectDataset == "Commodity":
             svm_model.fit(X_train, y_train)
 
             st.write("Successfully Train the model")
-
-            st.write("SVM", "poly", "Prediction")
             prediction = svm_model.predict(X_test)
             st.write("Predicted result for poly Testing Dataset: ")
             prediction
 
             svm = mean_squared_error(y_test,prediction)
             st.write("mean squared error: for kernel", "poly" , svm)
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
             from sklearn.metrics import r2_score
             polyr2=np.round(r2_score(y_test,prediction),2)
             st.write("R2 score:", polyr2)
@@ -787,16 +774,12 @@ elif selectDataset == "Commodity":
             svm_model.fit(X_train, y_train)
 
             st.write("Successfully Train the model")
-
-            st.write("SVM", "sigmoid", "Prediction")
             prediction = svm_model.predict(X_test)
             st.write("Predicted result for sigmoid Testing Dataset: ")
             prediction
 
             svm = mean_squared_error(y_test,prediction)
             st.write("mean squared error: for kernel", "sigmoid", svm)
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
             from sklearn.metrics import r2_score
             sigmoidr2=np.round(r2_score(y_test,prediction),2)
             st.write("R2 score:", sigmoidr2)
