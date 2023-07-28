@@ -385,7 +385,7 @@ elif selectDataset == "Stock":
             return prediction[0]
 
         # Set the title of the app
-        st.title("Predict Adjusted Close from Date")
+        st.title("Predict Close Price from Date")
 
         # Add a date input widget
         selected_date = st.date_input("Select a date", help="Choose a date")
@@ -645,7 +645,7 @@ elif selectDataset == "Commodity":
 
             # Streamlit app
             st.subheader("Gold Close Price Prediction")
-            st.write("Enter the details below to predict the adjusted close price:")
+            st.write("Enter the details below to predict the close price:")
 
             sd = st.date_input("Select a date", help="Choose a date")
             if sd:
@@ -778,9 +778,7 @@ elif selectDataset == "Commodity":
             polyr2=np.round(r2_score(y_test,prediction),2)
             st.write("R2 score:", polyr2)
 
-        
-
-
+    
             st.write(" ")
         elif selectKernel == "Sigmoid":
             st.subheader("Sigmoid")
@@ -802,34 +800,6 @@ elif selectDataset == "Commodity":
             from sklearn.metrics import r2_score
             sigmoidr2=np.round(r2_score(y_test,prediction),2)
             st.write("R2 score:", sigmoidr2)
-            model = svm_model
-            selectPredict = st.sidebar.selectbox ("Select Prediction", options = ["Predict This"])
-            def predict_target_value(selected_date):
-                # Convert user input date to string and then to numeric representation
-                selected_date_str = selected_date.strftime("%Y-%m-%d")
-                user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
-
-                # Prepare features for prediction (fill other features with default value, e.g., 0)
-                default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
-                user_features = [user_numeric_date] + default_features
-
-                # Scale the user input features
-                user_scaled = scaler.transform([user_features])
-
-                # Make prediction using the trained model
-                prediction = svm_model.predict(user_scaled)
-
-                return prediction[0]
-
-            # Set the title of the app
-            st.title("Predict Adjusted Close from Date")
-
-            # Add a date input widget
-            selected_date = st.date_input("Select a date", help="Choose a date")
-
-            if selected_date:
-                predicted_value = predict_target_value(selected_date)
-                st.write("Predicted Adjusted Close Value:", predicted_value)
 
 #CRYPTOCURRENCY PRICE
 elif selectDataset == "Cryptocurrency":
