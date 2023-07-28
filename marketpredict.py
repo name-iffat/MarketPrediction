@@ -374,8 +374,8 @@ elif selectDataset == "Stock":
             def extract_date_features(df):
                 stock1['date'] = pd.to_datetime(stock1['date'])
                 stock1['year'] = stock1['date'].dt.year
-                df['month'] = df['date'].dt.month
-                df['day'] = df['date'].dt.day
+                stock1['month'] = stock1['date'].dt.month
+                stock1['day'] = stock1['date'].dt.day
                 return stock1.drop(columns=['date'])
 
             X = stock1.drop(columns = ["date","symbol", "close","volume"])
@@ -418,6 +418,8 @@ elif selectDataset == "Stock":
             if sd:
                 predicted_value = predict_target_value(sd)
                 year = sd.year
+                month = sd.month
+                day = sd.day
                 st.write(year)
             sh = st.slider("Highest Bid Price in that one hour period (high)", min_value=float(X_test['high'].min()), max_value=float(X_test['high'].max()), key="sh_slider")
             so = st.slider("Opening Bid Price (open)", min_value=float(X_test['open'].min()), max_value=float(X_test['open'].max()), key="so_slider")
@@ -429,6 +431,8 @@ elif selectDataset == "Stock":
                 'low':  sl,
                 'high': sh,
                 'year': [sd.year],
+                'month': [sd.month],
+                'day': [sd.day],
             }, index=[0])
 
             # Predict function
