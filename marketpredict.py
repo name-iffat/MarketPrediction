@@ -14,6 +14,20 @@ from sklearn.metrics import mean_squared_error, r2_score
 from PIL import Image
 from datetime import datetime
 
+# Define global variables
+X_train = None
+X_test = None
+y_train = None
+y_test = None
+rf = None
+knn = None
+svm_model = None
+MSERF = None
+MSEKNN = None
+svm = None
+r2 = None
+knnr2 = None
+linearr2 = None
 selectDataset = st.sidebar.selectbox ("Select Dataset", options = ["Home", "Forex", "Stock","Commodity","Cryptocurrency","Futures"])
 
 if selectDataset == "Home":
@@ -345,7 +359,7 @@ elif selectDataset == "Stock":
     y_test
 
 #Algorithm selection
-    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest", "Prediction"])
+    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest", "Prediction","Conclusion"])
 
 #RANDOM FOREST
     if selectModel == "Random Forest":
@@ -452,6 +466,8 @@ elif selectDataset == "Stock":
                 st.subheader("Predicted Close Price")
                 st.write(predicted_close_price)
 
+
+
 #KNN
     elif selectModel == "K-Nearest Neighbors":
         
@@ -521,228 +537,9 @@ elif selectDataset == "Stock":
             
             sc= np.round(svm_model.score(X_test, y_test),2)*100
             st.write("Accuracy score:", sc)
-
-            st.write(" ")
-
-        elif selectKernel == "Linear":
-            st.subheader("Linear")
-            svm_model = SVR(kernel="linear")
-            st.write("Training the Model...")
-            svm_model.fit(X_train, y_train)
-
-            st.write("Successfully Train the model")
-
-            st.write("SVM", "linear", "Prediction")
-            prediction = svm_model.predict(X_test)
-            st.write("Predicted result for linear Testing Dataset: ")
-            prediction
-
-            svm = mean_squared_error(y_test,prediction)
-            st.write("mean squared error: for kernel", "linear" , svm)
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
-
-
-            st.write(" ")
-
-        elif selectKernel == "Poly":
-            st.subheader("Poly")
-            svm_model = SVR(kernel="poly")
-            st.write("Training the Model...")
-            svm_model.fit(X_train, y_train)
-
-            st.write("Successfully Train the model")
-
-            st.write("SVM", "poly", "Prediction")
-            prediction = svm_model.predict(X_test)
-            st.write("Predicted result for poly Testing Dataset: ")
-            prediction
-
-            svm = mean_squared_error(y_test,prediction)
-            st.write("mean squared error: for kernel", "poly" , svm)
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
-
-            st.write(" ")
-        elif selectKernel == "Sigmoid":
-            st.subheader("Sigmoid")
-            svm_model = SVR(kernel="sigmoid")
-            st.write("Training the Model...")
-            svm_model.fit(X_train, y_train)
-
-            st.write("Successfully Train the model")
-
-            st.write("SVM", "sigmoid", "Prediction")
-            prediction = svm_model.predict(X_test)
-            st.write("Predicted result for sigmoid Testing Dataset: ")
-            prediction
-
-            svm = mean_squared_error(y_test,prediction)
-            st.write("mean squared error: for kernel", "sigmoid", svm)
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
-
-
-
-#COMMODITY PRICE
-elif selectDataset == "Commodity":
-    st.subheader("Description of the dataset")
-    with st.columns(3)[1]:
-        st.image("image/gold.png", width=300)
-    text = """
-    <style>
-    .justify-text {
-        text-align: justify;
-    }
-    </style>
-
-    <div class="justify-text">
-    There are 80 total columns and 1718 total rows in the dataset. The data was gathered for attributes including the price of oil, the Standard and Poor's 500 index, the Dow Jones Index US Bond rates (10 years), the exchange rate between the euro and the dollar, the price of precious metals such as silver and platinum as well as other metals like palladium and rhodium, the price of the US Dollar Index, and the Eldorado Gold Corporation and Gold Miners ETF. The historical data for the Gold ETF is available in seven columns: Date, Open, High, Low, Close, Adjusted Close, and Volume. The closing price of a stock is determined by its price at the end of the trading day, as opposed to the Adjusted Close. The adjusted closing price, on the other hand, determines value by taking into account variables like dividends, stock splits, and new stock offerings. Therefore, Adjusted Close is the outcome variable, and its value needs to be predicted.
-    </div>
-    """
-    
-    st.write(text, unsafe_allow_html=True)
-
-    st.subheader("Full dataset for Commodity")
-
-    commodity_dataset = pd.read_csv('final_USO.csv',na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
-    commodity_dataset
-
-    st.subheader("Data input for Commodity")
-    data_input_training = commodity_dataset.drop(columns = ["Adj Close"])
-    data_input_training
-
-    st.subheader("Data target for Commodity")
-    data_target_training = commodity_dataset['Adj Close']
-    data_target_training
-
-    st.subheader("Training and testing data will be divided using Train_Test_Split")
-    X = data_input_training
-    y = data_target_training
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-
-
-    from sklearn.preprocessing import StandardScaler
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test =scaler.transform(X_test)
-
-    st.subheader("Training data for input and target")
-    st.write("Training Data Input")
-    X_train
-    st.write("Training Data Target")
-    y_train
-
-    st.subheader("Testing data for input and target")
-    st.write("Testing Data Input")
-    X_test
-    st.write("Testing Data Target")
-    y_test
-
-#Algorithm selection
-    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest"])
-
-#RANDOM FOREST
-    if selectModel == "Random Forest":
-        n_estimators_list = [15, 25, 50, 100]
-        st.subheader(f"Random Forest  market estimation model")
-        
-        for n_estimators in n_estimators_list:
-            st.subheader("- - - - -")
-            st.write("N Estimator =",n_estimators)   
-            rf = RandomForestRegressor(n_estimators=n_estimators, random_state=0)
-            st.write("Training the Model...")
-            rf.fit(X_train, y_train)
-
-            st.write("Successfully Trained the model")
-            output_predicted = rf.predict(X_test)
-            st.write("Predicted result for Testing Dataset:")
-            st.write(output_predicted)
-
-            MSE = mean_squared_error(y_test,output_predicted)
-            st.write(f"The Mean Squared Error produced by n_estimators:",n_estimators,"=", MSE)
             from sklearn.metrics import r2_score
-            r2=np.round(r2_score(y_test,output_predicted),2)
-            st.write("R2 score:",n_estimators,"=", r2)
-
-        model = rf
-        selectPredict = st.sidebar.selectbox ("Select Prediction", options = ["Predict This"])
-        def predict_target_value(selected_date):
-            # Convert user input date to string and then to numeric representation
-            selected_date_str = selected_date.strftime("%Y-%m-%d")
-            user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
-
-            # Prepare features for prediction (fill other features with default value, e.g., 0)
-            default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
-            user_features = [user_numeric_date] + default_features
-
-            # Scale the user input features
-            user_scaled = scaler.transform([user_features])
-
-            # Make prediction using the trained model
-            prediction = rf.predict(user_scaled)
-
-            return prediction[0]
-
-        # Set the title of the app
-        st.title("Predict Adjusted Close from Date")
-
-        # Add a date input widget
-        selected_date = st.date_input("Select a date", help="Choose a date")
-
-        if selected_date:
-            predicted_value = predict_target_value(selected_date)
-            st.write("Predicted Adjusted Close Value:", predicted_value)
-    
-#KNN
-    elif selectModel == "K-Nearest Neighbors":
-        n_neighbors_list = [10, 15, 20, 100]
-
-        for n_neighbors in n_neighbors_list:
-            st.subheader(f"K-Nearest Neighbors  market estimation model (n_neighbors = {n_neighbors})")
-            knn = KNeighborsRegressor(n_neighbors=n_neighbors)
-            st.write("Training the Model...")
-            knn.fit(X_train, y_train)
-
-            st.write("Successfully Trained the model")
-            output_predicted_knn = knn.predict(X_test)
-            st.write("Predicted result for Testing Dataset:")
-            st.write(output_predicted_knn)
-
-            MSE_knn = mean_squared_error(y_test,output_predicted_knn)
-            st.write(f"The Mean Squared Error produced by KNN with number of nearest neighbors {n_neighbors}: ", MSE_knn)
-            from sklearn.metrics import r2_score
-            knnr2=np.round(r2_score(y_test,output_predicted_knn),2)
-            st.write("R2 score:",n_neighbors,"=", knnr2)
-
-#SVM
-    elif selectModel == "Support Vector Machine":
-
-        selectKernel = st.sidebar.selectbox ("Select Kernel", options = ["RBF", "Linear", "Sigmoid", "Poly"])
-       
-        if selectKernel == "RBF":
-            st.subheader("Support Vector Machine  market estimation model")
-            st.write(" ")
-            st.subheader("RBF")
-            svm_model = SVR(kernel="rbf")
-            st.write("Training the Model...")
-            svm_model.fit(X_train, y_train)
-
-            st.write("Successfully Train the model")
-
-            st.write("SVM", "rbf", "Prediction")
-            prediction = svm_model.predict(X_test)
-            st.write("Predicted result for RBF Testing Dataset: ")
-            prediction
-
-            svm = mean_squared_error(y_test,prediction)
-            st.write("mean squared error: for kernel", "rbf" , svm)
-
-            sc= np.round(svm_model.score(X_test, y_test),2)*100
-            st.write("Accuracy score:", sc)
-            from sklearn.metrics import r2_score
-            rbfr2=np.round(r2_score(y_test,prediction),2)
-            st.write("R2 score:", rbfr2)
+            linearr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", linearr2)
 
             st.write(" ")
 
@@ -788,11 +585,8 @@ elif selectDataset == "Commodity":
             sc= np.round(svm_model.score(X_test, y_test),2)*100
             st.write("Accuracy score:", sc)
             from sklearn.metrics import r2_score
-            polyr2=np.round(r2_score(y_test,prediction),2)
-            st.write("R2 score:", polyr2)
-
-        
-
+            linearr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", linearr2)
 
             st.write(" ")
         elif selectKernel == "Sigmoid":
@@ -813,36 +607,241 @@ elif selectDataset == "Commodity":
             sc= np.round(svm_model.score(X_test, y_test),2)*100
             st.write("Accuracy score:", sc)
             from sklearn.metrics import r2_score
-            sigmoidr2=np.round(r2_score(y_test,prediction),2)
-            st.write("R2 score:", sigmoidr2)
-            model = svm_model
-            selectPredict = st.sidebar.selectbox ("Select Prediction", options = ["Predict This"])
-            def predict_target_value(selected_date):
+            linearr2=np.round(r2_score(y_test,prediction),2)
+            st.write("R2 score:", linearr2)
+
+    elif selectModel == "Conclusion":
+            # Display model comparison
+
+            total = 0
+            neighbors = [15, 55, 100, 200]
+            
+            for n in neighbors:
+                          
+                knn = KNeighborsRegressor(n_neighbors=n)
+
+                knn.fit(X_train, y_train)
+
+                outputPredictedKNN = knn.predict(X_test)
+
+                MSEKNN = mean_squared_error (y_test,outputPredictedKNN)
+                kc= np.round(knn.score(X_test, y_test),2)*100
+
+                # accuracy = accuracy_score(y_test,outputPredictedKNN)
+                # print("Neighbors=", n,"Accuracy:", accuracy)
+                from sklearn.metrics import r2_score
+                knnr2=np.round(r2_score(y_test,outputPredictedKNN),2)
+                total = total + knnr2
+            knnr2= total/4
+
+            #List of number estimators
+            total = 0
+            estimators = [15, 25, 50, 100]
+            for n in estimators:
+
+                rf = RandomForestRegressor (n_estimators = n, random_state = 0)
+                rf.fit (X_train, y_train)
+
+                outputPredictedRF = rf.predict(X_test)
+
+                MSERF = mean_squared_error (y_test,outputPredictedRF)
+                rc= np.round(rf.score(X_test, y_test),2)*100
+                from sklearn.metrics import r2_score
+                r2=np.round(r2_score(y_test,outputPredictedRF),2)
+                total = total + r2
+            r2 = total/4
+            total = 0
+            svk = ['linear','poly','rbf','sigmoid']
+            for n in svk:
+                
+                svm_model = SVR(kernel=n)
+                svm_model.fit(X_train, y_train)
+                prediction = svm_model.predict(X_test)
+                svm = mean_squared_error(y_test,prediction)
+                sc= np.round(svm_model.score(X_test, y_test),2)*100
+                from sklearn.metrics import r2_score
+                linearr2=np.round(r2_score(y_test,prediction),2)
+                total = total + linearr2
+            sc = total/4
+
+
+
+
+            st.subheader("Model Comparison")
+            st.write("Mean Squared Error:")
+            st.write("Random Forest:", MSERF)
+            st.write("K-Nearest Neighbors:", MSEKNN)
+            st.write("Support Vector Machine:", svm)
+
+            st.write("R2 Score:")
+            st.write("Random Forest:", r2)
+            st.write("K-Nearest Neighbors:", knnr2)
+            st.write("Support Vector Machine:", sc)
+
+            # Determine the best model
+            best_model = min([("Random Forest", MSERF, r2), ("K-Nearest Neighbors", MSEKNN, knnr2), ("Support Vector Machine", svm, sc)], key=lambda x: (x[1], -x[2]))
+
+            st.subheader("Best Model")
+            st.write("The best model is:", best_model[0])
+            st.write("Mean Squared Error:", best_model[1])
+            st.write("R2 Score:", best_model[2])
+
+
+
+
+
+#COMMODITY PRICE
+elif selectDataset == "Commodity":
+    st.subheader("Description of the dataset")
+    with st.columns(3)[1]:
+        st.image("image/gold.png", width=300)
+    text = """
+    <style>
+    .justify-text {
+        text-align: justify;
+    }
+    </style>
+
+    <div class="justify-text">
+    There are 80 total columns and 1718 total rows in the dataset. The data was gathered for attributes including the price of oil, the Standard and Poor's 500 index, the Dow Jones Index US Bond rates (10 years), the exchange rate between the euro and the dollar, the price of precious metals such as silver and platinum as well as other metals like palladium and rhodium, the price of the US Dollar Index, the Eldorado Gold Corporation and Gold Miners ETF. The historical data for the Gold ETF is available in seven columns: Date, Open, High, Low, Close, Adjusted Close and Volume. The closing price of a stock is determined by its price at the end of the trading day, as opposed to the Adjusted Close. The adjusted closing price determines value by taking into account variables like dividends, stock splits and new stock offerings. Therefore, Adjusted Close is the outcome variable and its value needs to be predicted.
+    <br><br>
+    </div>
+    """
+    
+    st.write(text, unsafe_allow_html=True)
+
+    st.subheader("Full dataset for Commodity")
+
+    # Load the full dataset
+    commodity = pd.read_csv('final_USO.csv')
+    commodity
+
+    st.subheader("Data input for Commodity")
+    data_input_training = commodity[['Open', 'High', 'Low', 'Year','Month','Day']]
+    data_input_training
+
+    st.subheader("Data target for Commodity")
+    data_target_training = commodity['Adj Close']
+    data_target_training
+
+    st.subheader("Training and testing data will be divided using Train_Test_Split")
+    X = data_input_training
+    y = data_target_training
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+    st.subheader("Training data for input and target")
+    st.write("Training Data Input")
+    X_train
+    st.write("Training Data Target")
+    y_train
+
+    st.subheader("Testing data for input and target")
+    st.write("Testing Data Input")
+    X_test
+    st.write("Testing Data Target")
+    y_test
+
+#Algorithm selection
+    selectModel = st.sidebar.selectbox ("Select Model", options = ["Select Model", "Support Vector Machine", "K-Nearest Neighbors", "Random Forest", "Prediction"])
+
+#RANDOM FOREST
+    if selectModel == "Random Forest":
+        n_estimators_list = [15, 25, 50, 100]
+        st.subheader(f"Random Forest model")
+        
+        for n_estimators in n_estimators_list:
+            st.subheader("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+            st.write("N Estimator =",n_estimators)   
+            rf = RandomForestRegressor(n_estimators=n_estimators, random_state=0)
+            st.write("Training the Model...")
+            rf.fit(X_train, y_train)
+
+            st.write("Successfully Trained the model")
+            output_predicted = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset:")
+            st.write(output_predicted)
+
+            MSE = mean_squared_error(y_test,output_predicted)
+            st.write(f"The Mean Squared Error produced by n_estimators:",n_estimators,"=", MSE)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,output_predicted),2)
+            st.write("R2 score:",n_estimators,"=", r2)
+
+    elif selectModel == "Prediction":
+        # Function to extract useful features from the date
+            def extract_date_features(df):
+                commodity['Date'] = pd.to_datetime(commodity['Date'])
+                commodity['Year'] = commodity['Date'].dt.year
+                commodity['Month'] = commodity['Date'].dt.month
+                commodity['Day'] = commodity['Date'].dt.day
+                return commodity.drop(columns=['Date'])
+
+            X = commodity[['Open', 'High', 'Low', 'Year','Month','Day']]
+            y = commodity['Adj Close']
+            # Train the Random Forest model
+            rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
+            st.write("Training the Model...")
+            rf.fit (X_train, y_train)
+
+            st.write("Successfully Train the model")
+            outputPredictedRF = rf.predict(X_test)
+            st.write("Predicted result for Testing Dataset: ")
+            outputPredictedRF
+
+            MSERF = mean_squared_error (y_test,outputPredictedRF)
+            st.write("The mean Squared Error Produced by n_estimator=", MSERF)
+            from sklearn.metrics import r2_score
+            r2=np.round(r2_score(y_test,outputPredictedRF),2)
+            st.write("R2 score:=", r2)
+
+            # Create X_test using the same columns as X (for user input)
+            X_test = commodity[['Open', 'High', 'Low', 'Year','Month','Day']]
+
+            def predict_target_value(sd):
                 # Convert user input date to string and then to numeric representation
-                selected_date_str = selected_date.strftime("%Y-%m-%d")
-                user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
+                    selected_date_str = sd.strftime("%Y-%m-%d")
+                    user_numeric_date = datetime.strptime(selected_date_str, "%Y-%m-%d").toordinal()
+                    # Prepare features for prediction (fill other features with default value, e.g., 0)
+                    default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
+                    #user_features = [user_numeric_date] + default_features
+                    return user_numeric_date
 
-                # Prepare features for prediction (fill other features with default value, e.g., 0)
-                default_features = [0] * (X_train.shape[1] - 1)  # Fill with zeros except for the date feature
-                user_features = [user_numeric_date] + default_features
+            # Streamlit app
+            st.subheader("Gold Close Price Prediction")
+            st.write("Enter the details below to predict the close price:")
 
-                # Scale the user input features
-                user_scaled = scaler.transform([user_features])
+            sd = st.date_input("Select a date", help="Choose a date")
+            if sd:
+                predicted_value = predict_target_value(sd)
+                year = sd.year
+                month = sd.month
+                day = sd.day
 
-                # Make prediction using the trained model
-                prediction = svm_model.predict(user_scaled)
+            op = st.slider("Gold ETF Open Price", min_value=float(X_test['Open'].min()), max_value=float(X_test['Open'].max()), key="open_slider")
+            hi = st.slider("Gold ETF High Price", min_value=float(X_test['High'].min()), max_value=float(X_test['High'].max()), key="high_slider")
+            lo = st.slider("Gold ETF Low Price", min_value=float(X_test['Low'].min()), max_value=float(X_test['Low'].max()), key="low_slider")
 
-                return prediction[0]
+            # Create a new input data point with user input
+            new_data = pd.DataFrame({
+                'Open': op,
+                'High': hi,
+                'Low': lo,
+                'Year': [sd.year],
+                'Month': [sd.month],
+                'Day': [sd.day],
+            }, index=[0])
 
-            # Set the title of the app
-            st.title("Predict Adjusted Close from Date")
+            # Predict function
+            def predict_close_price():
+                # Make predictions using the trained model
+                predicted_close = rf.predict(new_data)
+                return predicted_close
 
-            # Add a date input widget
-            selected_date = st.date_input("Select a date", help="Choose a date")
-
-            if selected_date:
-                predicted_value = predict_target_value(selected_date)
-                st.write("Predicted Adjusted Close Value:", predicted_value)
+            # Predict button
+            if st.button("Predict"):
+                predicted_close_price = predict_close_price()
+                st.subheader("Predicted Close Price")
+                st.write(predicted_close_price)
 
 #CRYPTOCURRENCY PRICE
 elif selectDataset == "Cryptocurrency":
@@ -1328,3 +1327,5 @@ elif selectDataset == "Futures":
             st.write("mean squared error: for kernel", "sigmoid", svm)
             sc= np.round(svm_model.score(X_test, y_test),2)*100
             st.write("Accuracy score:", sc)
+
+
