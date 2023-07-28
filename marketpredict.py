@@ -35,10 +35,17 @@ if selectDataset == "Home":
 
 #FOREX PRICE
 if selectDataset == "Forex":
+
+    st.subheader("Description of the dataset")
+    foreximg = Image.open('image/EUR-USD.jpg')
+
+    st.image(foreximg)
+    st.write("The dataset comprises 93,085 rows of information extracted from Oanda Brokerage. It contains 17 columns, including date, time, opening bid price (BO), highest bid price (BH), lowest bid price (BL), closing bid price (BC), bid price change (BCh) between open and close, opening ask price (AO), highest ask price (AH), lowest ask price (AL), closing ask price (AC), ask price change (ACh) between open and close, and timestamp data in the form of year, month, day, hour, and minute. The dataset offers a comprehensive view of the hourly price movement of the EUR/USD forex pair, allowing analysis of various price aspects and fluctuations during the specified period. The BO column represents the opening bid price at the start of each hour, while 'BH' and 'BL' indicate the highest and lowest bid prices, respectively, observed within that same one-hour timeframe. The BC column, which serves as the outcome variable, denotes the closing bid price for each hour.")
     
     st.subheader("Full dataset for Forex")
     # Load the full dataset
     forex_dataset = pd.read_csv('eurusd_hour.csv')
+    forex_dataset
 
     # Determine the fraction of the data you want to keep
     fraction_to_keep = 8000 / len(forex_dataset)
@@ -47,12 +54,12 @@ if selectDataset == "Forex":
     sampled_df = forex_dataset.sample(frac=fraction_to_keep, random_state=42)
 
     # Split the data into input features (X) and target variable (y)
-    X = sampled_df[['BH', 'BO', 'BL', 'AO', 'AH', 'AL', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
+    X = sampled_df[['BH', 'BO', 'BL', 'AO', 'AH', 'AL','MONTH']]
     y = sampled_df['BC']
 
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
@@ -546,7 +553,6 @@ elif selectDataset == "Commodity":
     st.write(text, unsafe_allow_html=True)
 
     st.subheader("Full dataset for Commodity")
-    #your dataset
 
     commodity_dataset = pd.read_csv('final_USO.csv',na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
     commodity_dataset
@@ -790,6 +796,12 @@ elif selectDataset == "Commodity":
 #CRYPTOCURRENCY PRICE
 elif selectDataset == "Cryptocurrency":
 
+    st.subheader("Description of the dataset")
+    xrpimg = Image.open('image/xrp.jpg')
+
+    st.image(xrpimg)
+    st.write("The dataset consists of 1335 rows, each representing a unique cryptocurrency trading instance. It includes 9 columns of information for each trading session, which is Unix timestamp, date, symbol, open price, high price, low price, close price, volume of XRP(a cryptocurrency), and volume in USDT(Tether, a stablecoin). The essential price-related information is contained in the 'open', 'high', 'low', and 'close' columns. The 'open' price denotes the initial price of XRP at the beginning of the trading session, while the 'high' and 'low' prices represent the highest and lowest prices reached during the session, respectively. The 'close' price signifies the final trading value of XRP at the end of the session, serving as the outcome variable for the predictive AI model.")
+
     st.subheader("Full dataset for Cryptocurrency")
 
     coin_dataset = pd.read_csv('coin_XRP.csv')
@@ -1019,12 +1031,19 @@ elif selectDataset == "Cryptocurrency":
 #REAL ESTATE PRICE
 elif selectDataset == "Futures":
     from sklearn.impute import SimpleImputer
+
+    st.subheader("Description of the dataset")
+    futuresimg = Image.open('image/crudeoil.jpg')
+    st.image(futuresimg)
+    st.write("This analysis utilizes a dataset sourced from Yahoo Finance, a reputable financial data provider, as of June 10, 2021, spans over 20 years. It consists of 5,297 daily observations and 7 essential columns: date, open, high, low, close, adj close, and volume. The analysis focuses on understanding Crude Oil futures prices' dynamics, identifying significant patterns and trends using daily opening, high, and low prices as input variables, and the daily closing price as the outcome variable of interest. This extensive dataset provides a unique opportunity to assess and compare Crude Oil market behavior across different time frames, aiding in informed decision-making for trading strategies and risk management.")
+
     
     st.subheader("Full dataset for Futures")
-    #your dataset
+    
 
     re_dataset = pd.read_csv('FUTURES\Crude Oil.csv',nrows=1500)
     df = pd.DataFrame(re_dataset)
+    re_dataset
 
     # Replace '?' with NaN
     re_dataset = re_dataset.replace('?', float('nan'))
