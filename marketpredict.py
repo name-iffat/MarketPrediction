@@ -54,12 +54,12 @@ if selectDataset == "Forex":
     sampled_df = forex_dataset.sample(frac=fraction_to_keep, random_state=42)
 
     # Split the data into input features (X) and target variable (y)
-    X = sampled_df[['BH', 'BO', 'BL', 'AO', 'AH', 'AL','MONTH']]
+    X = sampled_df[['BH', 'BO', 'BL', 'AO', 'AH', 'AL', 'YEAR', 'MONTH', 'DAY', 'HOUR']]
     y = sampled_df['BC']
 
 
     st.subheader("Training and testing data will be divided using Train_Test_Split")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
     st.subheader("Training data for input and target")
     st.write("Training Data Input")
