@@ -299,7 +299,8 @@ elif selectDataset == "Stock":
 
     st.subheader("Full dataset for Stock")
     #your dataset
-    stock = pd.read_csv('prices.csv',na_values=['null'],index_col='date',parse_dates=True,infer_datetime_format=True)
+    stock = pd.read_csv('prices.csv')
+                        #,na_values=['null'],index_col='date',parse_dates=True,infer_datetime_format=True)
     stock
 
     #sampling amazon dataset
@@ -308,7 +309,7 @@ elif selectDataset == "Stock":
     stock1
 
     st.subheader("Data input for stock")
-    data_input_training = stock1.drop(columns = ["symbol", "close","volume"])
+    data_input_training = stock1.drop(columns = ["date","symbol", "close","volume"])
     data_input_training
 
     st.subheader("Data target for stock")
@@ -377,7 +378,7 @@ elif selectDataset == "Stock":
                 df['day'] = df['date'].dt.day
                 return stock1.drop(columns=['date'])
 
-            X = stock1.drop(columns = ["symbol", "close","volume"])
+            X = stock1.drop(columns = ["date","symbol", "close","volume"])
             y = stock1['close']
             # Train the Random Forest model
             rf = RandomForestRegressor (n_estimators = 50, random_state = 0)
@@ -398,7 +399,7 @@ elif selectDataset == "Stock":
             st.write("R2 score:=", r2)
 
             # Create X_test using the same columns as X (for user input)
-            X_test = stock1.drop(columns = ["symbol", "close","volume"])
+            X_test = stock1.drop(columns = ["date","symbol", "close","volume"])
 
             def predict_target_value(sd):
             # Convert user input date to string and then to numeric representation
